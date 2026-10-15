@@ -80,7 +80,8 @@ export const layout = {
   screenPadding: 16,
   cardPadding: 16,
   cardGap: 12,
-  ctaHeight: 52,
+  /** Measured at 44pt on C01, C06, C07, C08, C09 and C10 alike. */
+  ctaHeight: 44,
   headerPaddingBottom: 20,
   hairline: 1,
 } as const;
@@ -94,9 +95,20 @@ export const shadow: Record<'card' | 'footer', ViewStyle> = {
   card: Platform.select({
     ios: {
       shadowColor: '#101828',
-      shadowOpacity: 0.06,
-      shadowRadius: 8,
-      shadowOffset: { width: 0, height: 2 },
+      /**
+       * Measured against C02 rather than guessed. Walking across the
+       * 12pt gap between two tiles, the mockup goes
+       * #FFFFFF -> #EEF0F4 -> #F2F4F8 -> #F4F6FA, i.e. it recovers to
+       * clean background within ~3pt and sits at background for the
+       * middle of the gap. The darkest shadow pixel implies a peak
+       * alpha of about 0.026 over the page background.
+       *
+       * radius 8 at 0.06 never reached background at all - the shadow
+       * bridged the whole gap and the grid read as one slab.
+       */
+      shadowOpacity: 0.05,
+      shadowRadius: 3,
+      shadowOffset: { width: 0, height: 1 },
     },
     default: { elevation: 2 },
   }) as ViewStyle,

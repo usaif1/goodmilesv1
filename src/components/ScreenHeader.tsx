@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { color, gradient, layout, space, type } from '@/theme';
 import { Gradient } from './Gradient';
+import { StatusBand } from './StatusBand';
 
 type Variant = 'solid' | 'hero' | 'accent';
 
@@ -40,13 +40,12 @@ export function ScreenHeader({
   right,
   children,
 }: Props) {
-  const insets = useSafeAreaInsets();
   const stops = STOPS[variant];
   const tall = variant === 'hero';
 
   return (
     <View>
-      <View style={[s.statusBand, { height: insets.top }]} />
+      <StatusBand />
       <View style={[s.header, !stops && s.solid, tall && s.tall]}>
         {stops && <Gradient colors={stops} />}
         <View style={s.titleRow}>
@@ -63,7 +62,6 @@ export function ScreenHeader({
 }
 
 const s = StyleSheet.create({
-  statusBand: { backgroundColor: color.brandDark },
   header: {
     paddingHorizontal: layout.screenPadding,
     paddingTop: space.md,
