@@ -12,5 +12,7 @@ export { RatingStars } from './RatingStars';
 export { ScreenHeader } from './ScreenHeader';
 export { ServiceCard } from './ServiceCard';
 export { StatusBadge, type BadgeTone } from './StatusBadge';
+export { StatusBand } from './StatusBand';
 export { StickyFooter } from './StickyFooter';
+export { TextField } from './TextField';
 export { Timeline, type StepState, type TimelineStep } from './Timeline';

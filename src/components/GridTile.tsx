@@ -50,23 +50,27 @@ export function Grid({ children }: { children: React.ReactNode }) {
 const s = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: space.md },
   tile: {
-    /** Three across with two 12pt gaps inside a 16pt gutter. */
-    width: `${100 / 3}%`,
+    /**
+     * Three across. Inside the 16pt gutter the row is 358pt, so three
+     * tiles and two 12pt gaps leave 111.3pt each, which is 31% of the
+     * container. flexGrow spends the 1pt rounding remainder rather
+     * than leaving it as a ragged right edge.
+     */
+    flexBasis: '31%',
     flexGrow: 1,
-    flexBasis: 96,
-    maxWidth: 140,
-    minHeight: 104,
+    /** C02 and C05 tiles both measure 86pt including shadow bleed. */
+    minHeight: 80,
     borderRadius: radius.lg,
-    paddingVertical: space.lg,
+    paddingVertical: space.md,
     paddingHorizontal: space.sm,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: space.sm,
+    gap: space.xs + 2,
   },
   plain: { backgroundColor: color.surface, ...shadow.card },
   tinted: { backgroundColor: color.brandTint },
   selected: { borderWidth: layout.hairline + 1, borderColor: color.brand },
   pressed: { opacity: 0.75 },
-  icon: { height: 28, justifyContent: 'center' },
+  icon: { height: 26, justifyContent: 'center' },
   label: { ...type.h2, textAlign: 'center' },
 });
