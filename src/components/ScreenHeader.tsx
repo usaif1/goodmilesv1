@@ -69,8 +69,11 @@ const s = StyleSheet.create({
     overflow: 'hidden',
   },
   solid: { backgroundColor: color.brand },
-  /** C07 reserves room above the title for the gradient to read. */
-  tall: { paddingTop: 140 },
+  /**
+   * C07's hero is 170pt below the status band. Title, subtitle and the
+   * bottom padding account for about 64 of that, leaving 106 above.
+   */
+  tall: { paddingTop: 106 },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',

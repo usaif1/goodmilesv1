@@ -86,7 +86,8 @@ const s = StyleSheet.create({
     borderRadius: radius.md,
   },
   lg: { height: layout.ctaHeight, paddingHorizontal: space.xxl },
-  sm: { paddingVertical: space.sm + 2, paddingHorizontal: space.lg },
+  /** C06's ADD measures 30pt tall. */
+  sm: { height: 30, paddingHorizontal: space.lg },
   block: { alignSelf: 'stretch' },
   outline: { backgroundColor: color.surface, borderWidth: layout.hairline },
   ghost: { backgroundColor: color.brandTint },

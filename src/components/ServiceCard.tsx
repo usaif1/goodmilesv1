@@ -56,7 +56,8 @@ const s = StyleSheet.create({
     justifyContent: 'space-between',
     gap: space.md,
   },
-  title: { ...type.h1, flex: 1 },
-  meta: { ...type.meta, marginTop: space.sm },
-  includes: { marginTop: space.md, marginBottom: space.lg },
+  /** Measured 10pt cap on C06, i.e. 14pt - the h2 role, not h1. */
+  title: { ...type.h2, flex: 1 },
+  meta: { ...type.meta, lineHeight: 16, marginTop: 2 },
+  includes: { marginTop: 0, marginBottom: space.sm },
 });

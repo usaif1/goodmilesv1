@@ -52,7 +52,9 @@ const s = StyleSheet.create({
     alignItems: 'center',
     gap: space.md,
     borderRadius: radius.lg,
-    padding: layout.cardPadding,
+    /** C05's banners measure 62-69pt tall; 16pt all round overshot. */
+    paddingVertical: space.md + 2,
+    paddingHorizontal: layout.cardPadding,
     overflow: 'hidden',
   },
   pressed: { opacity: 0.9 },
