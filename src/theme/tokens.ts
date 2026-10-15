@@ -27,6 +27,11 @@ export const color = {
   textDisabled: '#98A2B3', // grey-400, strikethrough compare-at prices
   textOnBrand: '#FFFFFF',
 
+  /** Unselected chips and subtle fills (grey-100). */
+  fillMuted: '#F2F4F7',
+  /** Text on an unselected chip (grey-700). */
+  textStrong: '#344054',
+
   // Lines. Cards carry a shadow and no border; these are for inputs,
   // the tab bar edge and the dashed rule in the cart bill summary.
   border: '#D0D5DD', // grey-300
