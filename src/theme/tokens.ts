@@ -16,6 +16,8 @@ export const color = {
   // Membership accent
   accent: '#7252EB',
   accentDark: '#43219E',
+  /** C15's solid CTA, a shade deeper than the gradient's start. */
+  accentSolid: '#5925DC',
 
   // Surfaces
   bg: '#F4F6FA',
