@@ -39,7 +39,7 @@ export const SERVICES: readonly Service[] = [
     id: 'basic-service',
     categoryId: 'periodic',
     title: 'Basic Service',
-    meta: 'Takes 4 Hours - 1 Month / 1,000 kms warranty',
+    meta: 'Takes 4 Hours · 1 Month / 1,000 kms warranty',
     includes: [
       'Air Filter Cleaning',
       'Battery Water Top up',
@@ -54,7 +54,7 @@ export const SERVICES: readonly Service[] = [
     id: 'standard-service',
     categoryId: 'periodic',
     title: 'Standard Service',
-    meta: 'Takes 6 Hours - 1 Month / 1,000 kms warranty',
+    meta: 'Takes 6 Hours · 1 Month / 1,000 kms warranty',
     includes: [
       'Air Filter Replacement',
       'Battery Water Top up',
@@ -69,7 +69,7 @@ export const SERVICES: readonly Service[] = [
     id: 'comprehensive-service',
     categoryId: 'periodic',
     title: 'Comprehensive Service',
-    meta: 'Takes 8 Hours - 1 Month / 1,000 kms warranty',
+    meta: 'Takes 8 Hours · 1 Month / 1,000 kms warranty',
     includes: [
       'Air Filter Replacement',
       'Battery Water Top up',
@@ -85,7 +85,7 @@ export const SERVICES: readonly Service[] = [
     id: 'car-wash',
     categoryId: 'periodic',
     title: 'Car Wash',
-    meta: 'Takes 2 Hours - Exterior and interior',
+    meta: 'Takes 2 Hours · Exterior and interior',
     includes: ['Exterior Wash', 'Interior Vacuum', 'Tyre Polish'],
     price: 649,
     was: 899,
@@ -95,7 +95,7 @@ export const SERVICES: readonly Service[] = [
     id: 'wheel-alignment',
     categoryId: 'tyres',
     title: 'Wheel Alignment',
-    meta: 'Takes 1 Hour - Computerised',
+    meta: 'Takes 1 Hour · Computerised',
     includes: ['Computerised Alignment', 'Balancing', 'Air Pressure Check'],
     price: 899,
     was: 1199,
@@ -106,7 +106,7 @@ export const SERVICES: readonly Service[] = [
     id: 'regular-ac-service',
     categoryId: 'ac',
     title: 'Regular AC Service',
-    meta: 'Takes 4 Hours - 1 Month warranty - Every 3 Months Recommended',
+    meta: 'Takes 4 Hours · 1 Month warranty · Every 3 Months Recommended',
     includes: [
       'AC Gas Topup ( upto 400gms )',
       'Condenser Cleaning',

@@ -3,6 +3,7 @@ export { Button } from './Button';
 export { Card } from './Card';
 export { CartBar } from './CartBar';
 export { CheckList } from './CheckList';
+export { Divider } from './Divider';
 export { Gradient } from './Gradient';
 export { Grid, GridTile } from './GridTile';
 export { KeyValueRow } from './KeyValueRow';
