@@ -104,3 +104,14 @@ export const COMPLAINT_REASONS: readonly string[] = [
   'Refund',
   'Other',
 ];
+
+/**
+ * The two extra items C11 says the workshop found. That screen states
+ * their existence but no mockup shows them, so these are invented to
+ * give EstimateReview something real to render - replace them when a
+ * design lands.
+ */
+export const ESTIMATE_EXTRAS: readonly { title: string; price: number }[] = [
+  { title: 'Brake disc skimming', price: 1200 },
+  { title: 'Cabin filter replacement', price: 650 },
+];

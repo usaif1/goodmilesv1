@@ -15,5 +15,6 @@ export { ServiceCard } from './ServiceCard';
 export { StatusBadge, type BadgeTone } from './StatusBadge';
 export { StatusBand } from './StatusBand';
 export { StickyFooter } from './StickyFooter';
+export { StubNote } from './StubNote';
 export { TextField } from './TextField';
 export { Timeline, type StepState, type TimelineStep } from './Timeline';
