@@ -16,9 +16,12 @@ type Props = { steps: readonly TimelineStep[] };
 /**
  * The nine-step order timeline on C11. Completed steps take the brand
  * green, the step awaiting the customer takes the warning orange with
- * a ring around it, and steps not yet reached are grey-300. The
- * connector inherits the colour of the step above it, so the line
- * reads as filled up to wherever the order has got to.
+ * a ring around it, and steps not yet reached are grey-300.
+ *
+ * The connector stays grey-300 throughout, including between completed
+ * steps. Sampling C11's gutter confirms this: #0F766E dot, #D0D5DD
+ * line, #0F766E dot. Filling it to show progress would read better,
+ * but the design does not do that and this follows the design.
  */
 export function Timeline({ steps }: Props) {
   return (
@@ -45,15 +48,7 @@ export function Timeline({ steps }: Props) {
             </View>
             {!last && (
               <View style={s.connectorRow}>
-                <View
-                  style={[
-                    s.connector,
-                    {
-                      backgroundColor:
-                        step.state === 'done' ? color.brand : color.pending,
-                    },
-                  ]}
-                />
+                <View style={s.connector} />
               </View>
             )}
           </Fragment>
@@ -74,18 +69,19 @@ const GUTTER = 28;
 const s = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'flex-start', gap: space.md },
   gutter: { width: GUTTER, alignItems: 'center', justifyContent: 'center' },
-  dot: { width: 16, height: 16, borderRadius: 8 },
+  /** C11's dots measure 15pt across. */
+  dot: { width: 15, height: 15, borderRadius: 7.5 },
   ring: {
     position: 'absolute',
     width: 26,
     height: 26,
     borderRadius: 13,
-    backgroundColor: color.warningBg,
+    backgroundColor: color.warningRing,
   },
   body: { flex: 1, paddingBottom: space.xs },
   label: type.h2,
   labelPending: { ...type.h2, color: color.textMuted },
   at: { ...type.meta, marginTop: 2 },
   connectorRow: { width: GUTTER, alignItems: 'center' },
-  connector: { width: 2, height: space.xl },
+  connector: { width: 2, height: space.xl, backgroundColor: color.pending },
 });

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import {
   Pressable,
   StyleSheet,
@@ -20,6 +21,8 @@ type Props = {
   /** Full-width CTA, as in every sticky footer. */
   block?: boolean;
   disabled?: boolean;
+  /** Leading glyph, e.g. the handset on C11's Call button. */
+  icon?: ReactNode;
   style?: ViewStyle;
 };
 
@@ -44,6 +47,7 @@ export function Button({
   size = 'lg',
   block = false,
   disabled = false,
+  icon,
   style,
 }: Props) {
   const accent = TONES[tone];
@@ -66,7 +70,8 @@ export function Button({
         disabled && s.disabled,
         style,
       ]}>
-      <View>
+      <View style={s.inner}>
+        {icon}
         <Text
           style={[
             size === 'lg' ? s.labelLg : s.labelSm,
@@ -80,6 +85,7 @@ export function Button({
 }
 
 const s = StyleSheet.create({
+  inner: { flexDirection: 'row', alignItems: 'center', gap: space.xs + 2 },
   base: {
     alignItems: 'center',
     justifyContent: 'center',
