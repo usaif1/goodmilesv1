@@ -35,3 +35,27 @@ export const membershipPriceFor = (segment: Segment) =>
 /** Terms the cart applies while a membership is active. */
 export const MEMBERSHIP_PERCENT = 10;
 export const MEMBERSHIP_MAX_DISCOUNT = 1000;
+
+/**
+ * Alternatives offered by CarSelect. No mockup covers that screen, so
+ * this is a small plausible garage rather than a real catalogue.
+ */
+export const GARAGE: readonly Vehicle[] = [
+  DEFAULT_VEHICLE,
+  {
+    id: 'city-petrol',
+    make: 'Honda',
+    model: 'City',
+    fuel: 'Petrol',
+    segment: 'Sedan',
+    registration: 'DL 8C XY 4412',
+  },
+  {
+    id: 'creta-diesel',
+    make: 'Hyundai',
+    model: 'Creta',
+    fuel: 'Diesel',
+    segment: 'SUV',
+    registration: 'HR 26 DQ 7781',
+  },
+];
