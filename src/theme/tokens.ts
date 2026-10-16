@@ -45,6 +45,8 @@ export const color = {
   warning: '#F79009',
   warningText: '#B54708',
   warningBg: '#FFF4E5',
+  /** Ring around C11's active timeline node (warning-100). */
+  warningRing: '#FEF0C7',
   error: '#B42318',
   errorBg: '#FEF3F2',
   gold: '#FDB022', // rating stars
