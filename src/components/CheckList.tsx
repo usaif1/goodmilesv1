@@ -31,9 +31,11 @@ export function CheckList({ items, dense }: Props) {
 }
 
 const s = StyleSheet.create({
-  list: { gap: space.md },
-  listDense: { gap: space.xs + 2 },
+  /** C07's included list sits on a ~27pt pitch. */
+  list: { gap: space.sm },
+  /** C06's ticked rows sit on a 15pt pitch, so no extra gap. */
+  listDense: { gap: 0 },
   row: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   text: { ...type.body, flexShrink: 1 },
-  textDense: { ...type.meta, flexShrink: 1 },
+  textDense: { ...type.meta, lineHeight: 15, flexShrink: 1 },
 });
