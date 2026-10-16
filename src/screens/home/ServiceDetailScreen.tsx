@@ -64,7 +64,7 @@ export default function ServiceDetailScreen() {
             )}
           </View>
           <Text style={s.gst}>
-            Price includes GST - for {vehicleShort(vehicle)}
+            Price includes GST · for {vehicleShort(vehicle)}
           </Text>
         </Card>
 

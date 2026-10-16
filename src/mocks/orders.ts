@@ -37,7 +37,7 @@ export const TRACKING_STEPS: readonly TimelineStep[] = [
   { label: 'Car picked up', at: '9 Oct, 3:22 PM', state: 'done' },
   { label: 'Car at workshop', at: '9 Oct, 4:05 PM', state: 'done' },
   {
-    label: 'Estimate ready - please approve',
+    label: 'Estimate ready · please approve',
     at: '9 Oct, 5:30 PM',
     state: 'active',
   },

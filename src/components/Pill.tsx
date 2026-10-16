@@ -48,8 +48,9 @@ export function PillGroup({ children, fill }: GroupProps) {
 const s = StyleSheet.create({
   pill: {
     borderRadius: radius.pill,
-    paddingVertical: space.md,
-    paddingHorizontal: space.lg,
+    /** C09 fits three slot pills per row; 16pt sides was too wide. */
+    paddingVertical: space.sm,
+    paddingHorizontal: space.md + 2,
     alignItems: 'center',
   },
   fill: { flex: 1 },

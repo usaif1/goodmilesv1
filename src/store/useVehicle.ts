@@ -13,7 +13,7 @@ export const useVehicle = create<State>()(set => ({
 }));
 
 /** "Maruti Suzuki Swift - Petrol", as C05 shows it. */
-export const vehicleLabel = (v: Vehicle) => `${v.make} ${v.model} - ${v.fuel}`;
+export const vehicleLabel = (v: Vehicle) => `${v.make} ${v.model} · ${v.fuel}`;
 
 /** "Swift Petrol", the short form on C08, C10 and C16. */
 export const vehicleShort = (v: Vehicle) => `${v.model} ${v.fuel}`;

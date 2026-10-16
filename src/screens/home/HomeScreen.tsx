@@ -56,7 +56,7 @@ export default function HomeScreen() {
       <ScrollView contentContainerStyle={s.body}>
         <Banner
           title="Get Rs 300 off your first service"
-          subtitle="Use code XYZFIRST - Free pickup & drop"
+          subtitle="Use code XYZFIRST · Free pickup & drop"
         />
 
         <Text style={s.section}>Our services</Text>
@@ -92,7 +92,7 @@ export default function HomeScreen() {
           title="Reserve Member"
           subtitle={
             membership
-              ? `10% off every service for 12 months - from Rs ${formatAmount(
+              ? `10% off every service for 12 months · from Rs ${formatAmount(
                   membership.price,
                 )}`
               : '10% off every service for 12 months'

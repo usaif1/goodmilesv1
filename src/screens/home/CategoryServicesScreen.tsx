@@ -52,7 +52,7 @@ export default function CategoryServicesScreen() {
         title={categoryName}
         subtitle={`Prices for ${vehicle.make} ${vehicleShort(
           vehicle,
-        )} - ${cityName(cityId)}`}
+        )} · ${cityName(cityId)}`}
       />
 
       {/* C06 puts the tabs on their own white band below the header. */}
