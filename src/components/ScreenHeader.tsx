@@ -8,6 +8,8 @@ type Variant = 'solid' | 'hero' | 'accent';
 
 type Props = {
   title: string;
+  /** Leading glyph, e.g. the star on C15. */
+  icon?: ReactNode;
   subtitle?: string;
   variant?: Variant;
   /** Rendered at the trailing edge, e.g. the city selector on C05. */
@@ -35,6 +37,7 @@ const STOPS: Record<Variant, readonly [string, string] | null> = {
  */
 export function ScreenHeader({
   title,
+  icon,
   subtitle,
   variant = 'solid',
   right,
@@ -50,7 +53,10 @@ export function ScreenHeader({
         {stops && <Gradient colors={stops} />}
         <View style={s.titleRow}>
           <View style={s.titleCol}>
-            <Text style={[s.title, tall && s.titleHero]}>{title}</Text>
+            <View style={s.titleLine}>
+              {icon}
+              <Text style={[s.title, tall && s.titleHero]}>{title}</Text>
+            </View>
             {subtitle ? <Text style={s.subtitle}>{subtitle}</Text> : null}
           </View>
           {right}
@@ -81,6 +87,7 @@ const s = StyleSheet.create({
     gap: space.md,
   },
   titleCol: { flex: 1 },
+  titleLine: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   title: { ...type.h1, color: color.textOnBrand },
   titleHero: type.hero,
   subtitle: { ...type.meta, color: color.brandTint, marginTop: 2 },

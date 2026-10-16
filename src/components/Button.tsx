@@ -26,9 +26,13 @@ type Props = {
   style?: ViewStyle;
 };
 
+/**
+ * The accent fill is the solid #5925DC measured on C15's CTA, not the
+ * lighter #7252EB that starts the membership gradient.
+ */
 const TONES: Record<Tone, string> = {
   brand: color.brand,
-  accent: color.accent,
+  accent: color.accentSolid,
 };
 
 /**
