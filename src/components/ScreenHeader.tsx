@@ -1,5 +1,7 @@
-import type { ReactNode } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useContext, type ReactNode } from 'react';
+import { NavigationContext } from '@react-navigation/native';
+import ChevronLeft from 'lucide-react-native/icons/chevron-left';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { color, gradient, layout, space, type } from '@/theme';
 import { Gradient } from './Gradient';
 import { StatusBand } from './StatusBand';
@@ -16,6 +18,11 @@ type Props = {
   right?: ReactNode;
   /** Content below the title, e.g. the car bar on C05. */
   children?: ReactNode;
+  /**
+   * Force the back control on or off. Left unset it appears whenever
+   * the root stack has somewhere to return to.
+   */
+  showBack?: boolean;
 };
 
 const STOPS: Record<Variant, readonly [string, string] | null> = {
@@ -34,6 +41,17 @@ const STOPS: Record<Variant, readonly [string, string] | null> = {
  * fixed 28pt, which is only correct for the device they were rendered
  * at. RN 0.87 removed StatusBar's Android backgroundColor prop, so
  * this band is also what colours the status bar area on Android.
+ *
+ * The back control is an addition, not something the mockups show.
+ * None of the twelve draws one, which is fine for a static design but
+ * leaves a running app with no way out of a pushed screen.
+ *
+ * Whether to show it is read from the ROOT stack, not from the nearest
+ * navigator. On a tab screen the nearest navigator is the tab bar,
+ * whose canGoBack turns true as soon as you switch tabs - which would
+ * put a back arrow on Home. Walking up to the parent first means tabs
+ * report correctly, while ReserveMember still gets an arrow when it is
+ * pushed from a banner rather than opened as a tab.
  */
 export function ScreenHeader({
   title,
@@ -42,7 +60,17 @@ export function ScreenHeader({
   variant = 'solid',
   right,
   children,
+  showBack,
 }: Props) {
+  /**
+   * NavigationContext rather than useNavigation: this is a
+   * presentational component and should still render in a test or a
+   * gallery that has no navigator above it, where useNavigation
+   * throws.
+   */
+  const navigation = useContext(NavigationContext);
+  const rootNav = navigation?.getParent() ?? navigation;
+  const back = showBack ?? rootNav?.canGoBack() ?? false;
   const stops = STOPS[variant];
   const tall = variant === 'hero';
 
@@ -52,6 +80,16 @@ export function ScreenHeader({
       <View style={[s.header, !stops && s.solid, tall && s.tall]}>
         {stops && <Gradient colors={stops} />}
         <View style={s.titleRow}>
+          {back && (
+            <Pressable
+              onPress={() => rootNav?.goBack()}
+              hitSlop={12}
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
+              style={({ pressed }) => (pressed ? s.backPressed : null)}>
+              <ChevronLeft size={26} color={color.textOnBrand} />
+            </Pressable>
+          )}
           <View style={s.titleCol}>
             <View style={s.titleLine}>
               {icon}
@@ -84,9 +122,10 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: space.md,
+    gap: space.sm,
   },
   titleCol: { flex: 1 },
+  backPressed: { opacity: 0.6 },
   titleLine: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   title: { ...type.h1, color: color.textOnBrand },
   titleHero: type.hero,
