@@ -69,7 +69,19 @@ export default function LoginScreen() {
           label="Verify & Continue"
           block
           disabled={otp.length < 4}
-          onPress={() => navigation.navigate('CitySelect')}
+          onPress={() =>
+            /**
+             * Reset, not navigate: verifying the OTP is a one-way
+             * door, so Login leaves the stack entirely. That also
+             * stops Android's system back returning to it.
+             *
+             * City select keeps its back control when it is opened
+             * from the Home city chip or Profile instead, because
+             * there it is a change the user can cancel - which is why
+             * only this entry point resets.
+             */
+            navigation.reset({ index: 0, routes: [{ name: 'CitySelect' }] })
+          }
         />
       </StickyFooter>
     </View>
