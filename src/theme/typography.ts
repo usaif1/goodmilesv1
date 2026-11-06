@@ -1,87 +1,86 @@
 import type { TextStyle } from 'react-native';
-import { color } from './tokens';
 
 /**
- * System default: SF Pro on iOS, Roboto on Android.
+ * Plus Jakarta Sans, bundled as four static faces.
  *
- * This is the single place the typeface is decided. To adopt a bundled
- * face later (Mulish was the closest match to the mockups), set a value
- * here and every role below inherits it - no screen needs to change.
- * That only holds while screens use these roles instead of writing raw
- * fontSize / fontWeight, so please keep doing that.
+ * Each role names its face directly instead of pairing a family with
+ * `fontWeight`. Android resolves numeric weights against the faces a
+ * family actually ships and silently falls back to regular when one is
+ * missing - and weight 600 is this design system's workhorse (128 of
+ * the prototype's 154 weight declarations). Naming the face removes the
+ * guesswork: the PostScript names in the TTFs match their filenames, so
+ * the same string resolves on iOS and Android alike.
+ *
+ * Do not add `fontWeight` to these. It is redundant at best and, on
+ * Android, actively harmful.
  */
-export const fontFamily: TextStyle['fontFamily'] = undefined;
+export const face = {
+  regular: 'PlusJakartaSans-Regular',
+  medium: 'PlusJakartaSans-Medium',
+  semibold: 'PlusJakartaSans-SemiBold',
+  bold: 'PlusJakartaSans-Bold',
+} as const;
 
 /**
- * Weights are restricted to 400 / 700 / 800 on purpose. Android resolves
- * numeric weights against the faces Roboto actually ships, and 500/600
- * can silently fall back to regular on some devices. Sticking to weights
- * with real faces keeps iOS and Android in step.
- */
-
-/**
- * Sizes are calibrated from the mockups by measuring the cap height of
- * isolated capitals and dividing by 0.715, not estimated by eye.
- * Mockups are 780x1688, i.e. iPhone 14 at @2x, so 390pt logical width.
+ * Sizes, line heights and tracking come from the prototype's CSS.
+ * Its `em` tracking is converted to points here (RN takes absolute
+ * values): -0.025em at 28px is -0.7, and so on.
+ *
+ * None of these carry a colour. Colour comes from the active palette at
+ * the call site, because every one of them has to work in both themes.
  */
 export const type = {
-  /** C01/C05 "XYZ" wordmark. */
-  display: {
-    fontFamily,
-    fontSize: 40,
-    fontWeight: '800',
-    letterSpacing: -0.5,
-    color: color.brand,
+  /** Page titles. `.h1` */
+  h1: {
+    fontFamily: face.semibold,
+    fontSize: 28,
+    lineHeight: 30,
+    letterSpacing: -0.7,
   },
-  /** C07 gradient hero title. */
-  hero: {
-    fontFamily,
-    fontSize: 22,
-    fontWeight: '700',
-    color: color.textOnBrand,
+  /** Section titles. `.h2` */
+  h2: {
+    fontFamily: face.semibold,
+    fontSize: 24,
+    lineHeight: 29,
+    letterSpacing: -0.36,
   },
-  /** Screen header titles: C02, C06, C08, C09, C11, C14, C15, C16. */
-  h1: { fontFamily, fontSize: 18, fontWeight: '700', color: color.text },
-  /** Section titles and card titles. */
-  h2: { fontFamily, fontSize: 14, fontWeight: '700', color: color.text },
+  /** Card titles. `.h3` */
+  h3: { fontFamily: face.semibold, fontSize: 17, lineHeight: 22 },
 
-  body: { fontFamily, fontSize: 14, fontWeight: '400', color: color.text },
-  bodyMuted: {
-    fontFamily,
-    fontSize: 14,
-    fontWeight: '400',
-    color: color.textMuted,
+  /** The header bar's title. `.top .t b` - clamps to two lines. */
+  headerTitle: {
+    fontFamily: face.semibold,
+    fontSize: 20,
+    lineHeight: 24,
+    letterSpacing: -0.2,
   },
-  /** Meta lines: "Takes 4 Hours - 1 Month / 1,000 kms warranty". */
-  meta: { fontFamily, fontSize: 12, fontWeight: '400', color: color.textMuted },
+  /** The line under it. `.top .t span` - muted, single line, ellipsised. */
+  headerSub: { fontFamily: face.regular, fontSize: 13 },
 
-  price: { fontFamily, fontSize: 16, fontWeight: '700', color: color.text },
-  /** Compare-at price beside it. */
-  priceStrike: {
-    fontFamily,
-    fontSize: 13,
-    fontWeight: '400',
-    color: color.textDisabled,
-    textDecorationLine: 'line-through',
-  },
+  /** Default body copy. `body { 400 15px/1.45 }` */
+  body: { fontFamily: face.regular, fontSize: 15, lineHeight: 22 },
+  /** Emphasis inside body copy. The prototype's `b` is 600, not bold. */
+  bodyStrong: { fontFamily: face.semibold, fontSize: 15, lineHeight: 22 },
 
-  /** Full-width CTA label. */
-  button: {
-    fontFamily,
-    fontSize: 15,
-    fontWeight: '700',
-    color: color.textOnBrand,
-  },
-  /** Inline ADD / ADDED / Change / Review buttons. */
-  buttonSmall: { fontFamily, fontSize: 13, fontWeight: '700' },
+  /** `.small` */
+  small: { fontFamily: face.regular, fontSize: 13, lineHeight: 19 },
+  smallStrong: { fontFamily: face.semibold, fontSize: 13, lineHeight: 19 },
+  /** `.label` - pair with palette.muted. */
+  label: { fontFamily: face.regular, fontSize: 13 },
+  /** Timestamps, captions, counts. */
+  meta: { fontFamily: face.regular, fontSize: 12, lineHeight: 17 },
 
-  /** Tab bar labels; the component sets the colour per active state. */
-  tab: { fontFamily, fontSize: 11, fontWeight: '700' },
-  /** ESTIMATE SENT / COMPLETED / CANCELLED / OPEN. */
-  badge: {
-    fontFamily,
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 0.4,
-  },
+  /** `.btn` */
+  button: { fontFamily: face.semibold, fontSize: 16 },
+  /** `.btn.sm` */
+  buttonSmall: { fontFamily: face.semibold, fontSize: 14 },
+  /** `.chip` */
+  chip: { fontFamily: face.semibold, fontSize: 14 },
+  /** `.pill` */
+  pill: { fontFamily: face.semibold, fontSize: 12 },
+
+  /** `.field input` - 16 keeps iOS from zooming the field on focus. */
+  input: { fontFamily: face.regular, fontSize: 16 },
 } as const satisfies Record<string, TextStyle>;
+
+export type TypeRole = keyof typeof type;

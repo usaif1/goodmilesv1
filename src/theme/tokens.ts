@@ -1,128 +1,217 @@
-import { Platform, type ViewStyle } from 'react-native';
-
 /**
- * Colour values are sampled directly from the mockups in app_screens/
- * rather than estimated. The ramp is Untitled UI's greys plus Tailwind
- * teal-700 as the brand colour; where a value was needed that the
- * mockups do not show, it is taken from the same Untitled UI ramp so
- * the set stays internally consistent.
+ * Design tokens transcribed from the reference prototype
+ * (reference/index.html, the `:root` and `:root[data-theme="dark"]`
+ * blocks). Values are copied, not re-derived - if something here looks
+ * wrong, check it against the prototype before changing it.
+ *
+ * The prototype ships dark mode as a real feature: a switch on Account,
+ * defaulting to light. So every colour is a light/dark pair, and screens
+ * must read them through `useTheme()` rather than importing `light`
+ * directly. Hardcoding a hex anywhere is what makes dark mode expensive
+ * later.
  */
-export const color = {
-  // Brand
-  brand: '#0F766E', // headers, CTAs, active states
-  brandDark: '#0B5C55', // status bar
-  brandTint: '#E6F4F2', // ghost buttons, "All 11 services" tile
 
-  // Membership accent
-  accent: '#7252EB',
-  accentDark: '#43219E',
-  /** C15's solid CTA, a shade deeper than the gradient's start. */
-  accentSolid: '#5925DC',
+/** Every colour the design system defines. */
+export type Palette = {
+  // Brand
+  navy: string;
+  navy2: string;
+  orange: string;
+  /** Label colour on an orange fill - navy, since white on orange is only 3.4:1. */
+  onOrange: string;
+  orangeInk: string;
+  orangeTint: string;
+  orangeDeep: string;
+  orangeDeep2: string;
+  orangeLine: string;
 
   // Surfaces
-  bg: '#F4F6FA',
-  surface: '#FFFFFF',
+  /** The page behind the app frame. */
+  stage: string;
+  /** The screen background. */
+  page: string;
+  /** Cards, sheets, headers. */
+  card: string;
+  /** Tinted surface for pills and inset blocks. */
+  bay: string;
 
   // Text
-  text: '#1D2433', // verified identical across five screens
-  textMuted: '#667085', // grey-500
-  textDisabled: '#98A2B3', // grey-400, strikethrough compare-at prices
-  textOnBrand: '#FFFFFF',
+  ink: string;
+  ink2: string;
+  muted: string;
 
-  /** Unselected chips and subtle fills (grey-100). */
-  fillMuted: '#F2F4F7',
-  /** Text on an unselected chip (grey-700). */
-  textStrong: '#344054',
-
-  // Lines. Cards carry a shadow and no border; these are for inputs,
-  // the tab bar edge and the dashed rule in the cart bill summary.
-  border: '#D0D5DD', // grey-300
-  divider: '#EAECF0', // grey-200
+  // Lines
+  line: string;
+  line2: string;
+  /** Borders on interactive controls. */
+  ctlLine: string;
+  dash: string;
 
   // State
-  success: '#079455',
-  successText: '#067647',
-  successBg: '#ECFDF3',
-  successIcon: '#57D38C',
-  warning: '#F79009',
-  warningText: '#B54708',
-  warningBg: '#FFF4E5',
-  /** Ring around C11's active timeline node (warning-100). */
-  warningRing: '#FEF0C7',
-  error: '#B42318',
-  errorBg: '#FEF3F2',
-  gold: '#FDB022', // rating stars
-  pending: '#D0D5DD', // unreached timeline nodes
+  ok: string;
+  okTint: string;
+  red: string;
+  redTint: string;
+  redLine: string;
+  redSolid: string;
+  /** WhatsApp green, for the WhatsApp actions only. */
+  wa: string;
+
+  // Controls
+  /** Fill for selected controls and primary buttons. */
+  sel: string;
+  toggleOff: string;
+  disBg: string;
+  disFg: string;
+  disChip: string;
+
+  // Misc
+  /** Background for the numeric odometer cells. */
+  odoBg: string;
+  skelA: string;
+  skelB: string;
+  demoBg: string;
+  /** Translucent tab bar fill, sits over a blur. */
+  tabsBg: string;
+};
+
+export const light: Palette = {
+  navy: '#16213a',
+  navy2: '#24324f',
+  orange: '#e2662b',
+  onOrange: '#16213a',
+  orangeInk: '#b4491a',
+  orangeTint: '#fbe9df',
+  orangeDeep: '#a8441a',
+  orangeDeep2: '#7a3d1c',
+  orangeLine: '#f3cdb8',
+
+  stage: '#d9dde3',
+  page: '#f3f4f1',
+  card: '#ffffff',
+  bay: '#e3e6ea',
+
+  ink: '#16213a',
+  ink2: '#47526a',
+  muted: '#5a6478',
+
+  line: '#dde1e6',
+  line2: '#d3d8de',
+  ctlLine: '#b5bdc7',
+  dash: '#b4bcc6',
+
+  ok: '#1f7a4d',
+  okTint: '#e3f1e9',
+  red: '#b83a2e',
+  redTint: '#f8e5e2',
+  redLine: '#efc9c3',
+  redSolid: '#b83a2e',
+  wa: '#17803f',
+
+  sel: '#16213a',
+  toggleOff: '#c5ccd5',
+  disBg: '#b8bfc9',
+  disFg: '#ffffff',
+  disChip: '#a9b0ba',
+
+  odoBg: '#16213a',
+  skelA: '#e7eaee',
+  skelB: '#f2f4f6',
+  demoBg: 'rgba(255,255,255,0.55)',
+  tabsBg: 'rgba(255,255,255,0.92)',
+};
+
+/**
+ * The prototype's dark block overrides a subset; anything it leaves
+ * alone keeps its light value. Spreading `light` first reproduces that
+ * exactly - orange, navy2, wa, onOrange and redSolid are deliberately
+ * not re-stated below.
+ */
+export const dark: Palette = {
+  ...light,
+
+  stage: '#060a13',
+  page: '#0c1322',
+  card: '#151f33',
+  bay: '#202c45',
+
+  ink: '#e8ecf4',
+  ink2: '#b3bed2',
+  muted: '#95a2b9',
+
+  line: '#263450',
+  line2: '#34415f',
+  ctlLine: '#4a5878',
+  dash: '#3d4a68',
+
+  navy: '#1a2745',
+  orangeInk: '#f08a5c',
+  orangeTint: '#3a2216',
+  orangeDeep: '#f4a57f',
+  orangeDeep2: '#f6c3a6',
+  orangeLine: '#5b3a27',
+
+  ok: '#4cc38a',
+  okTint: '#12301f',
+  red: '#f0877a',
+  redTint: '#3a1c19',
+  redLine: '#5a2a25',
+
+  sel: '#3b4f7c',
+  toggleOff: '#3d4a68',
+  disBg: '#26324d',
+  disFg: '#7c89a3',
+  disChip: '#5d6a86',
+
+  odoBg: '#0e1729',
+  skelA: '#1a2538',
+  skelB: '#243250',
+  demoBg: 'rgba(255,255,255,0.04)',
+  tabsBg: 'rgba(21,31,51,0.92)',
+};
+
+export const palettes = { light, dark } as const;
+export type ThemeName = keyof typeof palettes;
+
+/** 12px carries most of the UI; 999 is the pill. */
+export const radius = {
+  xs: 6,
+  sm: 8,
+  md: 10,
+  /** The default for cards, buttons, fields and photos. */
+  lg: 12,
+  xl: 20,
+  /** The floating tab bar. */
+  tabs: 22,
+  pill: 999,
 } as const;
 
-/** Gradient stops, sampled corner to corner. */
-export const gradient = {
-  hero: ['#96F3E1', '#10776F'], // C07 service-detail header
-  promo: ['#0F746C', '#13504C'], // C05 first-service banner
-  accent: ['#7252EB', '#43219E'], // C15 header, C08 membership card
-} as const;
-
-/** 4pt scale. */
 export const space = {
   xs: 4,
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 20,
-  xxl: 24,
-  xxxl: 32,
-} as const;
-
-export const radius = {
-  sm: 8,
-  md: 12,
-  lg: 16,
-  pill: 999,
+  sm: 6,
+  md: 8,
+  lg: 10,
+  xl: 12,
+  xxl: 16,
+  xxxl: 24,
 } as const;
 
 export const layout = {
   screenPadding: 16,
   cardPadding: 16,
-  cardGap: 12,
-  /** Measured at 44pt on C01, C06, C07, C08, C09 and C10 alike. */
-  ctaHeight: 44,
-  headerPaddingBottom: 20,
+  cardGap: 10,
+  /** Primary buttons and fields - taller than the usual 44. */
+  controlHeight: 52,
+  buttonHeightSm: 40,
+  /** Round icon buttons, and the minimum tap target. */
+  iconButton: 44,
   hairline: 1,
+  /** Borders on fields, chips and ghost buttons are heavier than hairlines. */
+  controlBorder: 1.5,
 } as const;
 
-/**
- * Cards and the sticky footer are lifted by shadow, not outlined. The
- * mockups show a soft falloff (#F4F6FA -> #F0F2F6 -> #FFFFFF) over
- * roughly 4pt.
- */
-export const shadow: Record<'card' | 'footer', ViewStyle> = {
-  card: Platform.select({
-    ios: {
-      shadowColor: '#101828',
-      /**
-       * Measured against C02 rather than guessed. Walking across the
-       * 12pt gap between two tiles, the mockup goes
-       * #FFFFFF -> #EEF0F4 -> #F2F4F8 -> #F4F6FA, i.e. it recovers to
-       * clean background within ~3pt and sits at background for the
-       * middle of the gap. The darkest shadow pixel implies a peak
-       * alpha of about 0.026 over the page background.
-       *
-       * radius 8 at 0.06 never reached background at all - the shadow
-       * bridged the whole gap and the grid read as one slab.
-       */
-      shadowOpacity: 0.05,
-      shadowRadius: 3,
-      shadowOffset: { width: 0, height: 1 },
-    },
-    default: { elevation: 2 },
-  }) as ViewStyle,
-  footer: Platform.select({
-    ios: {
-      shadowColor: '#101828',
-      shadowOpacity: 0.08,
-      shadowRadius: 12,
-      shadowOffset: { width: 0, height: -2 },
-    },
-    default: { elevation: 8 },
-  }) as ViewStyle,
-};
+/** Matches the prototype's --ease-out and --ease-drawer. */
+export const easing = {
+  out: [0.23, 1, 0.32, 1],
+  drawer: [0.32, 0.72, 0, 1],
+} as const;
