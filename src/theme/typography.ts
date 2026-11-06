@@ -33,7 +33,7 @@ export const face = {
  * None of these carry a colour, because every one has to work in both
  * themes. Colour comes from the active palette at the call site.
  */
-export const type = {
+export const typeScale = {
   /** Page titles. `.h1` - 24/700, tracking -.012em. */
   h1: {
     fontFamily: face.bold,
@@ -105,4 +105,4 @@ export const type = {
   input: { fontFamily: face.regular, fontSize: 16 },
 } as const satisfies Record<string, TextStyle>;
 
-export type TypeRole = keyof typeof type;
+export type TypeRole = keyof typeof typeScale;

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { dark, face, ICONS, light, type } from '@/theme';
+import { dark, face, ICONS, light, typeScale } from '@/theme';
 
 describe('fonts', () => {
   const fontDir = path.join(__dirname, '..', 'assets', 'fonts');
@@ -31,7 +31,7 @@ describe('fonts', () => {
    * matching face, which is why every role names its face instead.
    */
   it('never sets fontWeight', () => {
-    for (const [role, style] of Object.entries(type)) {
+    for (const [role, style] of Object.entries(typeScale)) {
       expect({ role, weight: 'fontWeight' in style }).toEqual({
         role,
         weight: false,
@@ -41,7 +41,7 @@ describe('fonts', () => {
 
   it('only uses faces that exist', () => {
     const known = new Set<string>(Object.values(face));
-    for (const [role, style] of Object.entries(type)) {
+    for (const [role, style] of Object.entries(typeScale)) {
       expect({ role, known: known.has(style.fontFamily) }).toEqual({
         role,
         known: true,
