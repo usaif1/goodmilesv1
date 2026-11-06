@@ -56,7 +56,10 @@ export type AppState = {
 };
 
 export type AppActions = {
-  login: (phone: string) => void;
+  /** Captured on welcome, before the code is verified. */
+  setPhone: (phone: string) => void;
+  /** Only after the OTP checks out. */
+  login: () => void;
   logout: () => void;
   setCar: (car: Car) => void;
   addCar: (car: Car) => void;
@@ -120,7 +123,8 @@ const initial: AppState = {
 export const useApp = create<AppState & AppActions>()(set => ({
   ...initial,
 
-  login: phone => set({ loggedIn: true, phone }),
+  setPhone: phone => set({ phone }),
+  login: () => set({ loggedIn: true }),
   logout: () => set({ ...initial }),
   setCar: car =>
     set(s => ({

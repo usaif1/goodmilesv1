@@ -39,7 +39,15 @@ export function Screen({
   );
 
   return (
-    <View style={[styles.fill, { backgroundColor: c.page, paddingTop: insets.top }]}>
+    <View
+      style={[
+        styles.fill,
+        { backgroundColor: c.page },
+        // The header pads for the status bar itself; without one, the
+        // page has to.
+        !header && { paddingTop: insets.top },
+      ]}
+    >
       {header}
       {scroll ? (
         <ScrollView

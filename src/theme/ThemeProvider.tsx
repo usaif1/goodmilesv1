@@ -1,3 +1,4 @@
+import { StatusBar } from 'react-native';
 import {
   createContext,
   useCallback,
@@ -56,7 +57,18 @@ export function ThemeProvider({
   );
 
   return (
-    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>
+      {/*
+        Headers are white in light and near-black in dark, and they sit
+        under the status bar, so its icons have to flip with the theme or
+        they vanish into the header. RN 0.87 is edge-to-edge on Android
+        by default, so barStyle is all there is to set.
+      */}
+      <StatusBar
+        barStyle={name === 'dark' ? 'light-content' : 'dark-content'}
+      />
+      {children}
+    </ThemeContext.Provider>
   );
 }
 

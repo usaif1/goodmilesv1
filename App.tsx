@@ -1,23 +1,16 @@
 /**
  * GoodMiles - doorstep car service.
  *
- * The UI is being rebuilt from the reference prototype. This is the
- * provider stack only; the navigator lands with the app shell.
- *
  * @format
  */
 
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { ThemeProvider, useTheme } from '@/theme';
-
-/** Placeholder until the navigator exists - proves the theme resolves. */
-function Shell() {
-  const { c } = useTheme();
-  return <View style={[styles.fill, { backgroundColor: c.page }]} />;
-}
+import { RootNavigator } from '@/navigation';
+import { ThemeProvider } from '@/theme';
 
 export default function App() {
   return (
@@ -25,7 +18,9 @@ export default function App() {
     <GestureHandlerRootView style={styles.fill}>
       <SafeAreaProvider>
         <ThemeProvider>
-          <Shell />
+          <BottomSheetModalProvider>
+            <RootNavigator />
+          </BottomSheetModalProvider>
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

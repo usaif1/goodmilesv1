@@ -34,6 +34,33 @@ export const face = {
  * themes. Colour comes from the active palette at the call site.
  */
 export const typeScale = {
+  /**
+   * The welcome headline. `.wl-h` - 34, the top of round 2's scale, and
+   * the only place it is used. Still 600, not 700, unlike h1 and h2.
+   */
+  display: {
+    fontFamily: face.semibold,
+    fontSize: 34,
+    lineHeight: 38,
+    letterSpacing: -0.85,
+  },
+  /** The GoodMiles wordmark on welcome. `.wl-wm` */
+  wordmark: {
+    fontFamily: face.semibold,
+    fontSize: 28,
+    lineHeight: 32,
+    letterSpacing: -0.84,
+  },
+  /**
+   * The question at the top of a step, on screens that ask one rather
+   * than carrying a header bar. `.ct-h`
+   */
+  question: {
+    fontFamily: face.semibold,
+    fontSize: 28,
+    lineHeight: 38,
+    letterSpacing: -0.8,
+  },
   /** Page titles. `.h1` - 24/700, tracking -.012em. */
   h1: {
     fontFamily: face.bold,

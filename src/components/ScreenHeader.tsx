@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { layout, useTheme } from '@/theme';
 
@@ -22,6 +23,10 @@ export type ScreenHeaderProps = {
 /**
  * `.top` - a white bar with a hairline under it. The title clamps to
  * one line on a pushed screen; a root's title is larger and bolder.
+ *
+ * The header owns the status-bar inset, because it is always the
+ * topmost thing on a screen that has one. Screen only pads the top
+ * itself when there is no header to do it.
  */
 export function ScreenHeader({
   title,
@@ -31,11 +36,13 @@ export function ScreenHeader({
   right,
 }: ScreenHeaderProps) {
   const { c } = useTheme();
+  const insets = useSafeAreaInsets();
   return (
     <View
       style={[
         styles.base,
         {
+          paddingTop: 4 + insets.top,
           backgroundColor: c.card,
           borderBottomColor: c.line,
         },
@@ -70,7 +77,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    paddingTop: 4,
     paddingRight: 12,
     paddingBottom: 6,
     borderBottomWidth: layout.hairline,
