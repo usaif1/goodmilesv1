@@ -1,8 +1,15 @@
 /**
- * Design tokens transcribed from the reference prototype
- * (reference/index.html, the `:root` and `:root[data-theme="dark"]`
- * blocks). Values are copied, not re-derived - if something here looks
- * wrong, check it against the prototype before changing it.
+ * Design tokens from the reference prototype (reference/index.html).
+ *
+ * The prototype's stylesheet layers three design passes - the original,
+ * "Production finish", and "Production finish, round 2" - so a token's
+ * first definition is usually not its final one. These are the computed
+ * final values after the full cascade. Read the last `:root` that sets a
+ * name, not the first.
+ *
+ * In light, `ok` resolves to ink: round 2 sets `--ok: var(--ink)`,
+ * dropping the success green. Dark keeps its green, because
+ * `:root[data-theme="dark"]` outranks a bare `:root`.
  *
  * The prototype ships dark mode as a real feature: a switch on Account,
  * defaulting to light. So every colour is a light/dark pair, and screens
@@ -87,21 +94,21 @@ export const light: Palette = {
   orangeLine: '#f3cdb8',
 
   stage: '#d9dde3',
-  page: '#f3f4f1',
+  page: '#f2f3f5',
   card: '#ffffff',
-  bay: '#e3e6ea',
+  bay: '#eef0f3',
 
   ink: '#16213a',
-  ink2: '#47526a',
-  muted: '#5a6478',
+  ink2: '#4b5468',
+  muted: '#6b7386',
 
-  line: '#dde1e6',
-  line2: '#d3d8de',
+  line: '#e4e7eb',
+  line2: '#dfe3e8',
   ctlLine: '#b5bdc7',
   dash: '#b4bcc6',
 
-  ok: '#1f7a4d',
-  okTint: '#e3f1e9',
+  ok: '#16213a',
+  okTint: '#eef0f3',
   red: '#b83a2e',
   redTint: '#f8e5e2',
   redLine: '#efc9c3',
@@ -200,14 +207,43 @@ export const layout = {
   screenPadding: 16,
   cardPadding: 16,
   cardGap: 10,
-  /** Primary buttons and fields - taller than the usual 44. */
-  controlHeight: 52,
+  /** Primary buttons. */
+  buttonHeight: 48,
   buttonHeightSm: 40,
+  /** Fields stay taller than buttons. */
+  fieldHeight: 52,
   /** Round icon buttons, and the minimum tap target. */
   iconButton: 44,
   hairline: 1,
-  /** Borders on fields, chips and ghost buttons are heavier than hairlines. */
-  controlBorder: 1.5,
+  /** Chips carry a heavier border than hairlines; fields use 1px of ink. */
+  chipBorder: 1.5,
+  /** Sheets are the one place with a larger radius. */
+  sheetRadius: 28,
+  /** Standard screen body: `.pad`. */
+  padGap: 12,
+  padBottom: 32,
+} as const;
+
+/**
+ * Cards sit flat on the grey page with a shadow and no border. Where the
+ * surface behind them is already white - inside a sheet, or a home
+ * section - round 2 swaps that for a hairline border and no shadow.
+ */
+export const shadow = {
+  card: {
+    shadowColor: '#101828',
+    shadowOpacity: 0.06,
+    shadowRadius: 2,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
+  },
+  footer: {
+    shadowColor: '#101828',
+    shadowOpacity: 0.06,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: -6 },
+    elevation: 8,
+  },
 } as const;
 
 /** Matches the prototype's --ease-out and --ease-drawer. */

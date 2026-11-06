@@ -6,6 +6,7 @@ export {
   space,
   layout,
   easing,
+  shadow,
   type Palette,
   type ThemeName,
 } from './tokens';

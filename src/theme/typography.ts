@@ -6,10 +6,9 @@ import type { TextStyle } from 'react-native';
  * Each role names its face directly instead of pairing a family with
  * `fontWeight`. Android resolves numeric weights against the faces a
  * family actually ships and silently falls back to regular when one is
- * missing - and weight 600 is this design system's workhorse (128 of
- * the prototype's 154 weight declarations). Naming the face removes the
- * guesswork: the PostScript names in the TTFs match their filenames, so
- * the same string resolves on iOS and Android alike.
+ * missing. Naming the face removes the guesswork: the PostScript names
+ * in the TTFs match their filenames, so the same string resolves on iOS
+ * and Android alike. Verified on device - all four render distinctly.
  *
  * Do not add `fontWeight` to these. It is redundant at best and, on
  * Android, actively harmful.
@@ -22,62 +21,85 @@ export const face = {
 } as const;
 
 /**
- * Sizes, line heights and tracking come from the prototype's CSS.
- * Its `em` tracking is converted to points here (RN takes absolute
- * values): -0.025em at 28px is -0.7, and so on.
+ * Sizes are the prototype's *final* cascaded values. Its stylesheet
+ * layers three design passes, and the "Production finish" rounds pulled
+ * the whole scale down - h1 from 28 to 24, body from 15 to 14 - and
+ * moved the headings from 600 to 700. Check the last rule that sets a
+ * property, not the first.
  *
- * None of these carry a colour. Colour comes from the active palette at
- * the call site, because every one of them has to work in both themes.
+ * Round 2 settled on one scale: 12 13 14 15 16 17 20 24 28 34.
+ * `em` tracking is converted to points, which is what RN takes.
+ *
+ * None of these carry a colour, because every one has to work in both
+ * themes. Colour comes from the active palette at the call site.
  */
 export const type = {
-  /** Page titles. `.h1` */
+  /** Page titles. `.h1` - 24/700, tracking -.012em. */
   h1: {
-    fontFamily: face.semibold,
-    fontSize: 28,
-    lineHeight: 30,
-    letterSpacing: -0.7,
-  },
-  /** Section titles. `.h2` */
-  h2: {
-    fontFamily: face.semibold,
+    fontFamily: face.bold,
     fontSize: 24,
-    lineHeight: 29,
-    letterSpacing: -0.36,
+    lineHeight: 28,
+    letterSpacing: -0.29,
+  },
+  /** Section titles. `.h2` - 20/700, tracking -.006em. */
+  h2: {
+    fontFamily: face.bold,
+    fontSize: 20,
+    lineHeight: 25,
+    letterSpacing: -0.12,
   },
   /** Card titles. `.h3` */
-  h3: { fontFamily: face.semibold, fontSize: 17, lineHeight: 22 },
+  h3: { fontFamily: face.semibold, fontSize: 16, lineHeight: 21 },
 
-  /** The header bar's title. `.top .t b` - clamps to two lines. */
+  /**
+   * A pushed screen's header title. `.top .t b` - clamps to one line.
+   * Tab roots use `headerTitleRoot` instead, which is larger.
+   */
   headerTitle: {
     fontFamily: face.semibold,
+    fontSize: 17,
+    lineHeight: 20,
+    letterSpacing: 0,
+  },
+  /** A tab root's header title. `.top.root .t b` */
+  headerTitleRoot: {
+    fontFamily: face.bold,
     fontSize: 20,
     lineHeight: 24,
-    letterSpacing: -0.2,
+    letterSpacing: -0.12,
   },
-  /** The line under it. `.top .t span` - muted, single line, ellipsised. */
-  headerSub: { fontFamily: face.regular, fontSize: 13 },
+  /** The line under a pushed header. `.top .t span` */
+  headerSub: { fontFamily: face.regular, fontSize: 12 },
+  /** The line under a root header. `.top.root .t span` */
+  headerSubRoot: { fontFamily: face.regular, fontSize: 13 },
 
-  /** Default body copy. `body { 400 15px/1.45 }` */
-  body: { fontFamily: face.regular, fontSize: 15, lineHeight: 22 },
+  /** Default body copy. `body` is 14px at the original 1.45 leading. */
+  body: { fontFamily: face.regular, fontSize: 14, lineHeight: 20 },
   /** Emphasis inside body copy. The prototype's `b` is 600, not bold. */
-  bodyStrong: { fontFamily: face.semibold, fontSize: 15, lineHeight: 22 },
+  bodyStrong: { fontFamily: face.semibold, fontSize: 14, lineHeight: 20 },
 
   /** `.small` */
   small: { fontFamily: face.regular, fontSize: 13, lineHeight: 19 },
   smallStrong: { fontFamily: face.semibold, fontSize: 13, lineHeight: 19 },
   /** `.label` - pair with palette.muted. */
-  label: { fontFamily: face.regular, fontSize: 13 },
+  label: { fontFamily: face.regular, fontSize: 12, letterSpacing: 0.24 },
   /** Timestamps, captions, counts. */
   meta: { fontFamily: face.regular, fontSize: 12, lineHeight: 17 },
 
   /** `.btn` */
-  button: { fontFamily: face.semibold, fontSize: 16 },
+  button: { fontFamily: face.semibold, fontSize: 15 },
   /** `.btn.sm` */
   buttonSmall: { fontFamily: face.semibold, fontSize: 14 },
-  /** `.chip` */
-  chip: { fontFamily: face.semibold, fontSize: 14 },
+  /** `.chip` - medium until selected. */
+  chip: { fontFamily: face.medium, fontSize: 14 },
+  /** `.chip.on` */
+  chipOn: { fontFamily: face.semibold, fontSize: 14 },
   /** `.pill` */
   pill: { fontFamily: face.semibold, fontSize: 12 },
+  /** `.tab` - medium until active. */
+  tab: { fontFamily: face.medium, fontSize: 12 },
+  /** `.tab.on` */
+  tabOn: { fontFamily: face.semibold, fontSize: 12 },
 
   /** `.field input` - 16 keeps iOS from zooming the field on focus. */
   input: { fontFamily: face.regular, fontSize: 16 },
