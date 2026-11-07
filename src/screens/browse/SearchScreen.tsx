@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { Field, Screen, ScreenHeader, ServiceRow, Text } from '@/components';
+import { CartBar, Field, Screen, ScreenHeader, ServiceRow, Text } from '@/components';
 import { SERVICES, categoryById } from '@/data';
 import { useApp } from '@/store';
 
@@ -35,6 +35,7 @@ export function SearchScreen({ navigation }: RootScreenProps<'Search'>) {
   return (
     <Screen
       header={<ScreenHeader title="Search" onBack={navigation.goBack} />}
+      footer={<CartBar onPress={() => navigation.navigate('Cart')} />}
     >
       <Field
         icon="search"

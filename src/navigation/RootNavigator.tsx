@@ -2,6 +2,13 @@ import { NavigationContainer, type Theme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import {
+  AddressScreen,
+  CartScreen,
+  ConfirmedScreen,
+  ReviewScreen,
+  SlotScreen,
+} from '@/screens/booking';
+import {
   AllCategoriesScreen,
   CategoryScreen,
   SearchScreen,
@@ -57,6 +64,11 @@ export function RootNavigator() {
         <Stack.Screen name="Category" component={CategoryScreen} />
         <Stack.Screen name="ServiceDetail" component={ServiceDetailScreen} />
         <Stack.Screen name="Search" component={SearchScreen} />
+        <Stack.Screen name="Cart" component={CartScreen} />
+        <Stack.Screen name="Slot" component={SlotScreen} />
+        <Stack.Screen name="Address" component={AddressScreen} />
+        <Stack.Screen name="Review" component={ReviewScreen} />
+        <Stack.Screen name="Confirmed" component={ConfirmedScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

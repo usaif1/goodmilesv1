@@ -16,3 +16,4 @@ export { AddButton, type AddButtonProps } from './AddButton';
 export { Section, type SectionProps } from './Section';
 export { CategoryTile, type CategoryTileProps } from './CategoryTile';
 export { ServiceRow, type ServiceRowProps } from './ServiceRow';
+export { CartBar } from './CartBar';

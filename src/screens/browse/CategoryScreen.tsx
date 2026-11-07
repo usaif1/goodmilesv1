@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
-import { Screen, ScreenHeader, ServiceRow, Text } from '@/components';
+import { CartBar, Screen, ScreenHeader, ServiceRow, Text } from '@/components';
 import { categoryById, servicesInCategory } from '@/data';
 import { useApp } from '@/store';
 
@@ -27,6 +27,7 @@ export function CategoryScreen({
           onBack={navigation.goBack}
         />
       }
+      footer={<CartBar onPress={() => navigation.navigate('Cart')} />}
     >
       {services.length ? (
         <View style={styles.list}>

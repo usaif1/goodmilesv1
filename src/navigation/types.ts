@@ -24,6 +24,11 @@ export type RootStackParamList = {
   Category: { categoryId: string };
   ServiceDetail: { serviceId: string };
   Search: undefined;
+  Cart: undefined;
+  Slot: undefined;
+  Address: undefined;
+  Review: undefined;
+  Confirmed: undefined;
 };
 
 export type RootScreenProps<T extends keyof RootStackParamList> =

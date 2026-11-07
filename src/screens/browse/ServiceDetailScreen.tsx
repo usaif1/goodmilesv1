@@ -85,11 +85,19 @@ export function ServiceDetailScreen({
       footer={
         inCart ? (
           <Footer>
-            <Button
-              label="Remove"
-              variant="ghost"
-              onPress={() => toggleCart(service.id)}
-            />
+            <View style={styles.actions}>
+              <Button
+                label="Remove"
+                variant="ghost"
+                style={styles.grow}
+                onPress={() => toggleCart(service.id)}
+              />
+              <Button
+                label="View cart"
+                style={styles.grow}
+                onPress={() => navigation.navigate('Cart')}
+              />
+            </View>
           </Footer>
         ) : (
           <Footer
@@ -256,6 +264,7 @@ export function ServiceDetailScreen({
 
 const styles = StyleSheet.create({
   grow: { flex: 1, minWidth: 0 },
+  actions: { flexDirection: 'row', gap: 8 },
   hero: {
     aspectRatio: 16 / 10,
     borderRadius: radius.lg,
