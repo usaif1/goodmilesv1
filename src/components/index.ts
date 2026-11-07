@@ -11,3 +11,8 @@ export { Footer, type FooterProps } from './Footer';
 export { Screen, type ScreenProps } from './Screen';
 export { TabBar, type TabBarProps, type TabItem } from './TabBar';
 export { Sheet, type SheetProps } from './Sheet';
+export { PriceTag, type PriceTagProps } from './PriceTag';
+export { AddButton, type AddButtonProps } from './AddButton';
+export { Section, type SectionProps } from './Section';
+export { CategoryTile, type CategoryTileProps } from './CategoryTile';
+export { ServiceRow, type ServiceRowProps } from './ServiceRow';

@@ -2,11 +2,18 @@ import { NavigationContainer, type Theme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import {
+  AllCategoriesScreen,
+  CategoryScreen,
+  SearchScreen,
+  ServiceDetailScreen,
+} from '@/screens/browse';
+import {
   BrandScreen,
   CityScreen,
   OtpScreen,
   WelcomeScreen,
 } from '@/screens/onboarding';
+import { TabNavigator } from './TabNavigator';
 import { face, useTheme } from '@/theme';
 
 import type { RootStackParamList } from './types';
@@ -45,6 +52,11 @@ export function RootNavigator() {
         <Stack.Screen name="Otp" component={OtpScreen} />
         <Stack.Screen name="City" component={CityScreen} />
         <Stack.Screen name="Brand" component={BrandScreen} />
+        <Stack.Screen name="Main" component={TabNavigator} />
+        <Stack.Screen name="AllCategories" component={AllCategoriesScreen} />
+        <Stack.Screen name="Category" component={CategoryScreen} />
+        <Stack.Screen name="ServiceDetail" component={ServiceDetailScreen} />
+        <Stack.Screen name="Search" component={SearchScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

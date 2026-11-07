@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { Card, Field, ScreenHeader, Text } from '@/components';
-import { BRANDS, MODELS } from '@/data';
+import { BRANDS, MODELS, YEAR_BANDS } from '@/data';
+import { useApp } from '@/store';
 import { Icon, layout, radius, useTheme } from '@/theme';
 
 import type { RootScreenProps } from '@/navigation/types';
@@ -27,6 +28,18 @@ function matchModel(query: string, brand: string, model: string) {
 export function BrandScreen({ navigation }: RootScreenProps<'Brand'>) {
   const { c } = useTheme();
   const [query, setQuery] = useState('');
+  const setCar = useApp(s => s.setCar);
+
+  /**
+   * Fuel, gearbox and year come from a second sheet in the prototype.
+   * Until that is built, a model picks sensible defaults so the rest of
+   * the app has a car to price against - note the year band drives the
+   * price, so this is a placeholder, not a final answer.
+   */
+  const choose = (brand: string, model: string) => {
+    setCar({ brand, model, year: YEAR_BANDS[1], fuel: 'Petrol', trans: 'Manual' });
+    navigation.reset({ index: 0, routes: [{ name: 'Main' }] });
+  };
 
   const brands = useMemo(
     () => BRANDS.filter(b => norm(b).includes(norm(query))),
@@ -96,6 +109,7 @@ export function BrandScreen({ navigation }: RootScreenProps<'Brand'>) {
                 key={b}
                 style={[styles.tile, { backgroundColor: c.card, borderColor: c.line }]}
                 accessibilityRole="button"
+                onPress={() => setQuery(b)}
               >
                 <View style={[styles.initials, { backgroundColor: c.bay }]}>
                   <Text variant="bodyStrong">
@@ -116,6 +130,7 @@ export function BrandScreen({ navigation }: RootScreenProps<'Brand'>) {
               <Pressable
                 key={`${b}-${m}`}
                 accessibilityRole="button"
+                onPress={() => choose(b, m)}
                 style={[
                   styles.modelRow,
                   i > 0 && { borderTopWidth: layout.hairline, borderTopColor: c.line },
