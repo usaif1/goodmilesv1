@@ -15,6 +15,15 @@ import {
   ServiceDetailScreen,
 } from '@/screens/browse';
 import {
+  BillScreen,
+  CarPhotosScreen,
+  DeliveryScreen,
+  EstimateScreen,
+  PickupScreen,
+  RateScreen,
+  WorkScreen,
+} from '@/screens/serviceday';
+import {
   BrandScreen,
   CityScreen,
   OtpScreen,
@@ -69,6 +78,13 @@ export function RootNavigator() {
         <Stack.Screen name="Address" component={AddressScreen} />
         <Stack.Screen name="Review" component={ReviewScreen} />
         <Stack.Screen name="Confirmed" component={ConfirmedScreen} />
+        <Stack.Screen name="Pickup" component={PickupScreen} />
+        <Stack.Screen name="CarPhotos" component={CarPhotosScreen} />
+        <Stack.Screen name="Estimate" component={EstimateScreen} />
+        <Stack.Screen name="Work" component={WorkScreen} />
+        <Stack.Screen name="Delivery" component={DeliveryScreen} />
+        <Stack.Screen name="Bill" component={BillScreen} />
+        <Stack.Screen name="Rate" component={RateScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

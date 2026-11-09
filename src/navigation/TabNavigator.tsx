@@ -2,6 +2,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { TabBar, type TabItem } from '@/components';
 import { HomeScreen } from '@/screens/browse';
+import { LiveScreen } from '@/screens/serviceday';
 import { makePlaceholder } from '@/screens/Placeholder';
 import { useApp } from '@/store';
 
@@ -9,7 +10,6 @@ import type { TabParamList } from './types';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
-const LiveScreen = makePlaceholder('Bookings', 'The service day lands in 4d.');
 const GarageScreen = makePlaceholder('My Garage', 'The passport lands in 4e.');
 const AccountScreen = makePlaceholder('Account', 'Account lands in 4f.');
 
