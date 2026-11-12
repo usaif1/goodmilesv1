@@ -9,3 +9,5 @@ export { HelpScreen } from './HelpScreen';
 export { NotRightScreen } from './NotRightScreen';
 export { GuardianScreen } from './GuardianScreen';
 export { NotificationsScreen } from './NotificationsScreen';
+export { CertifiedPdfScreen } from './CertifiedPdfScreen';
+export { CertificateScreen } from './CertificateScreen';

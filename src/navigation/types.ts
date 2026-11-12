@@ -45,6 +45,8 @@ export type RootStackParamList = {
   NotRight: undefined;
   Guardian: undefined;
   Passport: undefined;
+  CertifiedPdf: undefined;
+  Certificate: undefined;
 };
 
 export type RootScreenProps<T extends keyof RootStackParamList> =

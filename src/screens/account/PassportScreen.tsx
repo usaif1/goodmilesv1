@@ -77,7 +77,11 @@ export function PassportScreen({ navigation }: RootScreenProps<'Passport'>) {
       }
       footer={
         <Footer>
-          <Button label="See the certified PDF" variant="ghost" />
+          <Button
+            label="See the certified PDF"
+            variant="ghost"
+            onPress={() => navigation.navigate('CertifiedPdf')}
+          />
         </Footer>
       }
     >
