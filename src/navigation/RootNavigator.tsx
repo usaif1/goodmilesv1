@@ -2,6 +2,17 @@ import { NavigationContainer, type Theme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import {
+  GuardianScreen,
+  HelpScreen,
+  MembershipScreen,
+  NotRightScreen,
+  NotificationsScreen,
+  PassportScreen,
+  ReferScreen,
+  RewardsScreen,
+  SafetyScreen,
+} from '@/screens/account';
+import {
   AddressScreen,
   CartScreen,
   ConfirmedScreen,
@@ -85,6 +96,15 @@ export function RootNavigator() {
         <Stack.Screen name="Delivery" component={DeliveryScreen} />
         <Stack.Screen name="Bill" component={BillScreen} />
         <Stack.Screen name="Rate" component={RateScreen} />
+        <Stack.Screen name="Passport" component={PassportScreen} />
+        <Stack.Screen name="Notifications" component={NotificationsScreen} />
+        <Stack.Screen name="Rewards" component={RewardsScreen} />
+        <Stack.Screen name="Refer" component={ReferScreen} />
+        <Stack.Screen name="Membership" component={MembershipScreen} />
+        <Stack.Screen name="Safety" component={SafetyScreen} />
+        <Stack.Screen name="Help" component={HelpScreen} />
+        <Stack.Screen name="NotRight" component={NotRightScreen} />
+        <Stack.Screen name="Guardian" component={GuardianScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

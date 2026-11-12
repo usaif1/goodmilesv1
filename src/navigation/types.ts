@@ -36,6 +36,15 @@ export type RootStackParamList = {
   Delivery: undefined;
   Bill: undefined;
   Rate: undefined;
+  Notifications: undefined;
+  Rewards: undefined;
+  Refer: undefined;
+  Membership: undefined;
+  Safety: undefined;
+  Help: undefined;
+  NotRight: undefined;
+  Guardian: undefined;
+  Passport: undefined;
 };
 
 export type RootScreenProps<T extends keyof RootStackParamList> =
