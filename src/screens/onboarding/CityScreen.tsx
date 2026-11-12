@@ -50,9 +50,7 @@ export function CityScreen({ navigation }: RootScreenProps<'City'>) {
                 accessibilityRole="button"
                 onPress={() => choose(city)}
               >
-                <Text variant="h3" style={styles.rowText}>
-                  {city}
-                </Text>
+                <Text variant="h3">{city}</Text>
                 <Icon name="chev" size={18} color={c.muted} />
               </Pressable>
             </Fragment>
@@ -102,7 +100,6 @@ const styles = StyleSheet.create({
     height: 52,
     paddingHorizontal: 18,
   },
-  rowText: { fontWeight: undefined },
   out: {
     flexDirection: 'row',
     alignItems: 'center',

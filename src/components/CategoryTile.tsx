@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { categoryFrom, inr, type Car } from '@/domain';
 import type { Category } from '@/data';
-import { Icon, layout, radius, useTheme } from '@/theme';
+import { Icon, face, layout, radius, useTheme } from '@/theme';
 
 import { Text } from './Text';
 
@@ -63,6 +63,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  name: { textAlign: 'center', fontWeight: '700' },
+  name: { textAlign: 'center', fontFamily: face.bold },
   from: { marginTop: -4, textAlign: 'center' },
 });

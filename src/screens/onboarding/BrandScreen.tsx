@@ -1,10 +1,14 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 import { Card, Field, ScreenHeader, Text } from '@/components';
-import { BRANDS, MODELS, YEAR_BANDS } from '@/data';
+import { BRANDS, MODELS } from '@/data';
+import type { Car } from '@/domain';
 import { useApp } from '@/store';
 import { Icon, layout, radius, useTheme } from '@/theme';
+
+import { ModelSheet } from './ModelSheet';
 
 import type { RootScreenProps } from '@/navigation/types';
 
@@ -30,14 +34,18 @@ export function BrandScreen({ navigation }: RootScreenProps<'Brand'>) {
   const [query, setQuery] = useState('');
   const setCar = useApp(s => s.setCar);
 
-  /**
-   * Fuel, gearbox and year come from a second sheet in the prototype.
-   * Until that is built, a model picks sensible defaults so the rest of
-   * the app has a car to price against - note the year band drives the
-   * price, so this is a placeholder, not a final answer.
-   */
-  const choose = (brand: string, model: string) => {
-    setCar({ brand, model, year: YEAR_BANDS[1], fuel: 'Petrol', trans: 'Manual' });
+  const sheet = useRef<BottomSheetModal>(null);
+  const [picking, setPicking] = useState<string | null>(null);
+
+  /** A brand opens the sheet; the sheet is where the car is finished. */
+  const openBrand = (brand: string) => {
+    setPicking(brand);
+    sheet.current?.present();
+  };
+
+  const chosen = (car: Car) => {
+    setCar(car);
+    sheet.current?.dismiss();
     navigation.reset({ index: 0, routes: [{ name: 'Main' }] });
   };
 
@@ -58,6 +66,7 @@ export function BrandScreen({ navigation }: RootScreenProps<'Brand'>) {
   const nothing = query.trim() && !brands.length && !models.length;
 
   return (
+    <>
     <View style={[styles.page, { backgroundColor: c.page }]}>
       <ScreenHeader
         onBack={navigation.goBack}
@@ -109,7 +118,7 @@ export function BrandScreen({ navigation }: RootScreenProps<'Brand'>) {
                 key={b}
                 style={[styles.tile, { backgroundColor: c.card, borderColor: c.line }]}
                 accessibilityRole="button"
-                onPress={() => setQuery(b)}
+                onPress={() => openBrand(b)}
               >
                 <View style={[styles.initials, { backgroundColor: c.bay }]}>
                   <Text variant="bodyStrong">
@@ -130,7 +139,7 @@ export function BrandScreen({ navigation }: RootScreenProps<'Brand'>) {
               <Pressable
                 key={`${b}-${m}`}
                 accessibilityRole="button"
-                onPress={() => choose(b, m)}
+                onPress={() => openBrand(b)}
                 style={[
                   styles.modelRow,
                   i > 0 && { borderTopWidth: layout.hairline, borderTopColor: c.line },
@@ -150,6 +159,13 @@ export function BrandScreen({ navigation }: RootScreenProps<'Brand'>) {
         ) : null}
       </ScrollView>
     </View>
+    <ModelSheet
+      ref={sheet}
+      brand={picking}
+      onClose={() => sheet.current?.dismiss()}
+      onPick={chosen}
+    />
+    </>
   );
 }
 

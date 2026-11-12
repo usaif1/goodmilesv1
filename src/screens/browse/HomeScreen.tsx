@@ -6,7 +6,7 @@ import { CategoryTile, Section, Text } from '@/components';
 import { CATEGORIES, serviceById } from '@/data';
 import { inr, priceFor } from '@/domain';
 import { useApp } from '@/store';
-import { Icon, layout, radius, useTheme } from '@/theme';
+import { Icon, face, layout, radius, useTheme } from '@/theme';
 
 import type { TabScreenProps } from '@/navigation/types';
 
@@ -81,8 +81,12 @@ export function HomeScreen({ navigation }: TabScreenProps<'HomeTab'>) {
         >
           <Icon name="car" size={26} color={c.ink} />
           <View style={[styles.carBadge, { backgroundColor: c.ink }]}>
-            <Text variant="meta" style={[styles.carLabel, { color: c.card }]} numberOfLines={1}>
-              {car ? car.model : 'ADD CAR'}
+            {/*
+              No numberOfLines here: Android under-measures uppercase text
+              with letter-spacing and ellipsises a name that fits.
+            */}
+            <Text variant="meta" style={[styles.carLabel, { color: c.card }]}>
+              {car ? car.model : 'Add car'}
             </Text>
           </View>
         </Pressable>
@@ -204,9 +208,18 @@ const styles = StyleSheet.create({
   locationTop: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   locationName: { fontSize: 15 },
   grow: { flex: 1, minWidth: 0 },
-  car: { width: 80, alignItems: 'center', gap: 1 },
-  carBadge: { borderRadius: 4, paddingHorizontal: 8, paddingVertical: 2, maxWidth: 80 },
-  carLabel: { fontWeight: '700', letterSpacing: 0.55, textTransform: 'uppercase' },
+  car: { flexShrink: 0, maxWidth: 110, alignItems: 'center', gap: 1 },
+  carBadge: { borderRadius: 4, paddingHorizontal: 8, paddingVertical: 2 },
+  /*
+   * The bold face, not fontWeight on top of the regular one: Android
+   * fakes the weight and then mis-measures the result, which clipped
+   * this badge. typography.ts says the same thing.
+   */
+  carLabel: {
+    fontFamily: face.bold,
+    letterSpacing: 0.55,
+    textTransform: 'uppercase',
+  },
   searchBar: { paddingHorizontal: 16, paddingTop: 6, paddingBottom: 12, borderBottomWidth: layout.hairline },
   search: {
     flexDirection: 'row',
