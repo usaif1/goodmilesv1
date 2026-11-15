@@ -9,6 +9,7 @@ import {
   Pill,
   Screen,
   ScreenHeader,
+  ProofSheet,
   Sheet,
   Text,
 } from '@/components';
@@ -19,7 +20,7 @@ import {
   serviceById,
   type EstimateItem,
 } from '@/data';
-import { inr, priceFor } from '@/domain';
+import { inr, priceFor, serviceClock } from '@/domain';
 import { useApp } from '@/store';
 import { Icon, useTheme } from '@/theme';
 
@@ -36,7 +37,10 @@ export function EstimateScreen({ navigation }: RootScreenProps<'Estimate'>) {
   const advanceStage = useApp(s => s.advanceStage);
 
   const sheet = useRef<BottomSheetModal>(null);
+  const proof = useRef<BottomSheetModal>(null);
   const [explaining, setExplaining] = useState<EstimateItem | null>(null);
+  const [proving, setProving] = useState<EstimateItem | null>(null);
+  const clock = serviceClock(order?.slot.win);
 
   // Only the booked line is ticked to start; everything else is opt-in.
   const [selected, setSelected] = useState<Record<string, boolean>>({ m1: true });
@@ -116,19 +120,34 @@ export function EstimateScreen({ navigation }: RootScreenProps<'Estimate'>) {
               </Text>
             </View>
           ) : null}
-          {item.wait ? (
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => {
-                setExplaining(item);
-                sheet.current?.present();
-              }}
-            >
-              <Text variant="smallStrong" style={styles.link}>
-                What if I wait?
-              </Text>
-            </Pressable>
-          ) : null}
+          {item.booked ? null : (
+            <View style={styles.links}>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => {
+                  setProving(item);
+                  proof.current?.present();
+                }}
+              >
+                <Text variant="smallStrong" style={styles.link}>
+                  See the proof
+                </Text>
+              </Pressable>
+              {item.wait ? (
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => {
+                    setExplaining(item);
+                    sheet.current?.present();
+                  }}
+                >
+                  <Text variant="smallStrong" style={styles.link}>
+                    What if I wait?
+                  </Text>
+                </Pressable>
+              ) : null}
+            </View>
+          )}
         </View>
       </View>
     );
@@ -232,6 +251,13 @@ export function EstimateScreen({ navigation }: RootScreenProps<'Estimate'>) {
           <Text variant="body">{explaining?.wait}</Text>
         </Card>
       </Sheet>
+
+      <ProofSheet
+        ref={proof}
+        item={proving}
+        takenAt={clock.estimate}
+        onClose={() => proof.current?.dismiss()}
+      />
     </>
   );
 }
@@ -250,7 +276,8 @@ const styles = StyleSheet.create({
   },
   titleRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
   gain: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  link: { textDecorationLine: 'underline', marginTop: 4 },
+  links: { flexDirection: 'row', gap: 16, marginTop: 4 },
+  link: { textDecorationLine: 'underline' },
   found: { gap: 2, paddingVertical: 6 },
   bandRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
 });

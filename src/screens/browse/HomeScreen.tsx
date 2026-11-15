@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
-import { CategoryTile, Section, Text } from '@/components';
+import { CarsSheet, CategoryTile, Section, Text } from '@/components';
 import { CATEGORIES, serviceById } from '@/data';
 import { inr, priceFor } from '@/domain';
 import { useApp } from '@/store';
@@ -41,7 +42,10 @@ export function HomeScreen({ navigation }: TabScreenProps<'HomeTab'>) {
   const { c } = useTheme();
   const insets = useSafeAreaInsets();
   const car = useApp(s => s.car);
+  const cars = useApp(s => s.cars);
+  const setCar = useApp(s => s.setCar);
   const address = useApp(s => s.address);
+  const carsSheet = useRef<BottomSheetModal>(null);
 
   const big = useMemo(() => headlineCategories(new Date().getMonth()), []);
   const small = useMemo(
@@ -57,6 +61,7 @@ export function HomeScreen({ navigation }: TabScreenProps<'HomeTab'>) {
     navigation.navigate('Category', { categoryId: id });
 
   return (
+    <>
     <View style={[styles.fill, { backgroundColor: c.page }]}>
       <View style={[styles.header, { backgroundColor: c.card, paddingTop: insets.top + 6 }]}>
         <Pressable style={styles.location} accessibilityRole="button">
@@ -78,6 +83,9 @@ export function HomeScreen({ navigation }: TabScreenProps<'HomeTab'>) {
           style={styles.car}
           accessibilityRole="button"
           accessibilityLabel={car ? `Your car: ${car.brand} ${car.model}` : 'Add your car'}
+          onPress={() =>
+            car ? carsSheet.current?.present() : navigation.navigate('Brand')
+          }
         >
           <Icon name="car" size={26} color={c.ink} />
           <View style={[styles.carBadge, { backgroundColor: c.ink }]}>
@@ -192,6 +200,22 @@ export function HomeScreen({ navigation }: TabScreenProps<'HomeTab'>) {
         </Section>
       </ScrollView>
     </View>
+
+    <CarsSheet
+      ref={carsSheet}
+      cars={cars}
+      active={car}
+      onSelect={next => {
+        setCar(next);
+        carsSheet.current?.dismiss();
+      }}
+      onAdd={() => {
+        carsSheet.current?.dismiss();
+        navigation.navigate('Brand');
+      }}
+      onClose={() => carsSheet.current?.dismiss()}
+    />
+    </>
   );
 }
 

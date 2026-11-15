@@ -56,6 +56,15 @@ export const Sheet = forwardRef<BottomSheetModal, SheetProps>(function SheetBase
        * have defined heights, so snapPoints win here.
        */
       enableDynamicSizing={false}
+      /**
+       * Sheets that ask for input - the login sheet, the note for Amit -
+       * otherwise sit under the keyboard with their field and footer
+       * hidden. `interactive` lifts the sheet with the keyboard, and
+       * Android needs to be told to resize rather than pan.
+       */
+      keyboardBehavior="fillParent"
+      keyboardBlurBehavior="restore"
+      android_keyboardInputMode="adjustResize"
       backdropComponent={renderBackdrop}
       backgroundStyle={[styles.background, { backgroundColor: c.card }]}
       handleIndicatorStyle={[styles.grab, { backgroundColor: c.dash }]}

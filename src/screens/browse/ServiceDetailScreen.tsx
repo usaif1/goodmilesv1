@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 import {
   Button,
   Card,
   Divider,
   Footer,
+  PartsSheet,
   PriceTag,
   Screen,
   ScreenHeader,
@@ -48,6 +50,7 @@ export function ServiceDetailScreen({
   const parts = useApp(s => s.parts);
   const setPart = useApp(s => s.setPart);
 
+  const partsSheet = useRef<BottomSheetModal>(null);
   const [showAll, setShowAll] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
@@ -75,6 +78,7 @@ export function ServiceDetailScreen({
   const price = priceFor(service, car);
 
   return (
+    <>
     <Screen
       header={
         <ScreenHeader
@@ -131,7 +135,19 @@ export function ServiceDetailScreen({
 
       {service.parts && car ? (
         <View style={styles.parts}>
-          <Text variant="label">Choose your parts</Text>
+          <View style={styles.partsHead}>
+            <Text variant="label" style={styles.grow}>
+              Choose your parts
+            </Text>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => partsSheet.current?.present()}
+            >
+              <Text variant="smallStrong" style={styles.more}>
+                What&rsquo;s the difference?
+              </Text>
+            </Pressable>
+          </View>
           {(['oes', 'oem'] as PartChoice[]).map(option => {
             const p = priceFor(service, car, option);
             const extra =
@@ -259,6 +275,13 @@ export function ServiceDetailScreen({
         ))}
       </Card>
     </Screen>
+
+    <PartsSheet
+      ref={partsSheet}
+      make={makeName(car?.brand)}
+      onClose={() => partsSheet.current?.dismiss()}
+    />
+    </>
   );
 }
 
@@ -272,6 +295,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   parts: { gap: 8 },
+  partsHead: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   part: {
     flexDirection: 'row',
     alignItems: 'center',

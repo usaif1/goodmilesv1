@@ -1,10 +1,14 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
+import { useRef } from 'react';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
+
 import {
   Button,
   Card,
   Divider,
   Footer,
+  LoginSheet,
   Screen,
   ScreenHeader,
   Text,
@@ -36,6 +40,8 @@ export function CartScreen({ navigation }: RootScreenProps<'Cart'>) {
   const express = useApp(s => s.express);
   const payNow = useApp(s => s.payNow);
   const parts = useApp(s => s.parts);
+
+  const loginSheet = useRef<BottomSheetModal>(null);
 
   const bill = buildBill({
     cart,
@@ -69,6 +75,7 @@ export function CartScreen({ navigation }: RootScreenProps<'Cart'>) {
   }
 
   return (
+    <>
     <Screen
       header={
         <ScreenHeader
@@ -84,9 +91,15 @@ export function CartScreen({ navigation }: RootScreenProps<'Cart'>) {
       footer={
         <Footer total={{ label: 'Total', value: inr(bill.total) }}>
           <Button
-            label={car ? 'Choose pickup' : 'Add your car'}
+            label={!car ? 'Add your car' : loggedIn ? 'Choose pickup' : 'Log in to book'}
             style={styles.grow}
-            onPress={() => navigation.navigate(car ? 'Slot' : 'Brand')}
+            onPress={() => {
+              if (!car) return navigation.navigate('Brand');
+              // The prototype logs in over the cart rather than
+              // sending the customer away and losing it.
+              if (!loggedIn) return loginSheet.current?.present();
+              navigation.navigate('Slot');
+            }}
           />
         </Footer>
       }
@@ -204,6 +217,16 @@ export function CartScreen({ navigation }: RootScreenProps<'Cart'>) {
         ))}
       </Card>
     </Screen>
+
+    <LoginSheet
+      ref={loginSheet}
+      onClose={() => loginSheet.current?.dismiss()}
+      onLoggedIn={() => {
+        loginSheet.current?.dismiss();
+        navigation.navigate('Slot');
+      }}
+    />
+    </>
   );
 }
 
