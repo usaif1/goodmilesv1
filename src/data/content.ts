@@ -278,3 +278,58 @@ export const SYMPTOM_FINDINGS: Record<string, string> = {
   "AC weak": "Found: dirty cooling coil, vent air at 15°C",
   "Pulls to one side": "Found: alignment off, pulls left at 60 km/h"
 };
+
+/** What a customer can report before the inspection. */
+export const SYMPTOMS = [
+  'Noise when braking',
+  'AC weak',
+  'Warning light',
+  'Vibration',
+  'Pulls to one side',
+  'Hard to start',
+  'Smell or smoke',
+  'Leak',
+  'Gear hard',
+  'Not safe to drive',
+  'Nothing, just a service',
+] as const;
+
+export type NoteCopy = {
+  heading: (model: string) => string;
+  sub: string;
+  tap: string;
+  lang: string;
+  placeholder: string;
+  prompts: string[];
+};
+
+/**
+ * The note for Amit is offered in Hindi as well as English, because the
+ * customer is describing a noise to a mechanic, not filling in a form.
+ */
+export const NOTE_COPY: Record<'en' | 'hi', NoteCopy> = {
+  en: {
+    heading: m => `What\u2019s wrong with your ${m}?`,
+    sub: 'Amit listens before the driver comes. One minute is enough.',
+    tap: 'Tap to talk to Amit',
+    lang: 'Hindi, English or Hinglish. Speak the way you would to your mechanic.',
+    placeholder: 'e.g. Brakes squeal in the morning, AC weak in traffic',
+    prompts: [
+      'What do you hear, feel or smell?',
+      'When does it happen? Cold start, braking, speed-breakers, traffic?',
+      'Since when? Any warning light on the dashboard?',
+    ],
+  },
+  hi: {
+    heading: m => `\u0906\u092a\u0915\u0940 ${m} \u092e\u0947\u0902 \u0915\u094d\u092f\u093e \u0926\u093f\u0915\u094d\u0915\u0924 \u0939\u0948?`,
+    sub: '\u0921\u094d\u0930\u093e\u0907\u0935\u0930 \u0915\u0947 \u0906\u0928\u0947 \u0938\u0947 \u092a\u0939\u0932\u0947 \u0905\u092e\u093f\u0924 \u0906\u092a\u0915\u0940 \u092c\u093e\u0924 \u0938\u0941\u0928\u0947\u0902\u0917\u0947\u0964 \u090f\u0915 \u092e\u093f\u0928\u091f \u0915\u093e\u092b\u093c\u0940 \u0939\u0948\u0964',
+    tap: '\u0905\u092e\u093f\u0924 \u0938\u0947 \u092c\u093e\u0924 \u0915\u0930\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u091f\u0948\u092a \u0915\u0930\u0947\u0902',
+    lang: '\u0939\u093f\u0902\u0926\u0940, \u0905\u0902\u0917\u094d\u0930\u0947\u095b\u0940 \u092f\u093e \u0939\u093f\u0902\u0917\u094d\u0932\u093f\u0936, \u091c\u0948\u0938\u0947 \u092e\u0948\u0915\u0947\u0928\u093f\u0915 \u0915\u094b \u092c\u0924\u093e\u0924\u0947 \u0939\u0948\u0902\u0964',
+    placeholder: '\u091c\u0948\u0938\u0947: \u0938\u0941\u092c\u0939 \u092c\u094d\u0930\u0947\u0915 \u0932\u0917\u093e\u0928\u0947 \u092a\u0930 \u0906\u0935\u093e\u095b \u0906\u0924\u0940 \u0939\u0948',
+    prompts: [
+      '\u0915\u094d\u092f\u093e \u0906\u0935\u093e\u095b \u0906\u0924\u0940 \u0939\u0948, \u0915\u094d\u092f\u093e \u092e\u0939\u0938\u0942\u0938 \u0939\u094b\u0924\u093e \u0939\u0948 \u092f\u093e \u0915\u094b\u0908 \u0917\u0902\u0927?',
+      '\u0915\u092c \u0939\u094b\u0924\u093e \u0939\u0948? \u0938\u094d\u091f\u093e\u0930\u094d\u091f \u092a\u0930, \u092c\u094d\u0930\u0947\u0915 \u0932\u0917\u093e\u0924\u0947 \u0938\u092e\u092f, \u091f\u094d\u0930\u0948\u092b\u093c\u093f\u0915 \u092e\u0947\u0902?',
+      '\u0915\u092c \u0938\u0947? \u0921\u0948\u0936\u092c\u094b\u0930\u094d\u0921 \u092a\u0930 \u0915\u094b\u0908 \u0932\u093e\u0907\u091f \u091c\u0932\u0940 \u0939\u0948?',
+    ],
+  },
+};

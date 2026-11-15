@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { useEffect, useRef, useState, type ComponentRef } from 'react';
+import { Keyboard, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button, Field, Text } from '@/components';
@@ -20,6 +20,26 @@ export function WelcomeScreen({ navigation }: RootScreenProps<'Welcome'>) {
   const setPhone = useApp(s => s.setPhone);
   const [value, setValue] = useState(phone);
   const [hint, setHint] = useState('');
+  const scroll = useRef<ComponentRef<typeof ScrollView>>(null);
+  const [keyboard, setKeyboard] = useState(0);
+
+  /**
+   * The CTA sits below the fold once the keyboard is up. The spacer
+   * above it absorbs the window resize, so there is nothing to scroll
+   * into - the page has to grow by the keyboard's height first, which
+   * is what the prototype does with its 55vh of bottom padding.
+   */
+  useEffect(() => {
+    const show = Keyboard.addListener('keyboardDidShow', e => {
+      setKeyboard(e.endCoordinates.height);
+      setTimeout(() => scroll.current?.scrollToEnd({ animated: true }), 60);
+    });
+    const hide = Keyboard.addListener('keyboardDidHide', () => setKeyboard(0));
+    return () => {
+      show.remove();
+      hide.remove();
+    };
+  }, []);
 
   const send = () => {
     if (value.length < 10) {
@@ -33,10 +53,14 @@ export function WelcomeScreen({ navigation }: RootScreenProps<'Welcome'>) {
 
   return (
     <ScrollView
+      ref={scroll}
       style={[styles.page, { backgroundColor: c.page }]}
       contentContainerStyle={[
         styles.inner,
-        { paddingTop: insets.top + 46, paddingBottom: 24 + insets.bottom },
+        {
+          paddingTop: insets.top + 46,
+          paddingBottom: 24 + insets.bottom + keyboard,
+        },
       ]}
       keyboardShouldPersistTaps="handled"
     >

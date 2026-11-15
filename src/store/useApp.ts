@@ -53,6 +53,8 @@ export type AppState = {
   rating: number | null;
   /** What the customer told us is wrong, before the inspection. */
   symptoms: string[];
+  /** The note left for Amit before pickup, if there is one. */
+  note: { text: string; seconds: number } | null;
 };
 
 export type AppActions = {
@@ -82,6 +84,7 @@ export type AppActions = {
   approve: (total: number, selection: Record<string, boolean>) => void;
   rate: (stars: number) => void;
   toggleSymptom: (symptom: string) => void;
+  setNote: (note: { text: string; seconds: number } | null) => void;
   reset: () => void;
 };
 
@@ -112,6 +115,7 @@ const initial: AppState = {
   approvedSel: null,
   rating: null,
   symptoms: [],
+  note: null,
 };
 
 /**
@@ -162,6 +166,7 @@ export const useApp = create<AppState & AppActions>()(set => ({
         ? s.symptoms.filter(x => x !== symptom)
         : [...s.symptoms, symptom],
     })),
+  setNote: note => set({ note }),
   reset: () => set({ ...initial }),
 }));
 

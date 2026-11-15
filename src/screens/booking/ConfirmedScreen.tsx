@@ -1,6 +1,16 @@
-import { StyleSheet, View } from 'react-native';
+import { useRef } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
-import { Button, Card, Divider, Footer, Screen, Text } from '@/components';
+import {
+  Button,
+  Card,
+  Divider,
+  Footer,
+  NoteSheet,
+  Screen,
+  Text,
+} from '@/components';
 import { inr, pickupDays, windowText } from '@/domain';
 import { GARAGE } from '@/data';
 import { useApp } from '@/store';
@@ -13,6 +23,9 @@ export function ConfirmedScreen({ navigation }: RootScreenProps<'Confirmed'>) {
   const order = useApp(s => s.order);
   const car = useApp(s => s.car);
   const address = useApp(s => s.address);
+  const note = useApp(s => s.note);
+  const setNote = useApp(s => s.setNote);
+  const noteSheet = useRef<BottomSheetModal>(null);
 
   if (!order) {
     return (
@@ -26,6 +39,7 @@ export function ConfirmedScreen({ navigation }: RootScreenProps<'Confirmed'>) {
   const when = `${day.top.toLowerCase()}, ${day.date} · ${windowText(order.slot.win)}`;
 
   return (
+    <>
     <Screen
       footer={
         <Footer>
@@ -66,6 +80,47 @@ export function ConfirmedScreen({ navigation }: RootScreenProps<'Confirmed'>) {
           </View>
         </View>
       </Card>
+
+      {note ? (
+        <Card>
+          <Text variant="bodyStrong">Amit has your note</Text>
+          {note.seconds ? (
+            <Text variant="small" tone="muted">
+              Voice note · 0:{String(note.seconds).padStart(2, '0')}
+            </Text>
+          ) : null}
+          {note.text ? (
+            <Text variant="small" tone="muted">
+              &ldquo;{note.text}&rdquo;
+            </Text>
+          ) : null}
+          <Text variant="small" tone="muted">
+            He replies on WhatsApp before {order.self ? 'you drop the car' : 'pickup'}.
+          </Text>
+        </Card>
+      ) : (
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => noteSheet.current?.present()}
+        >
+          <Card>
+            <View style={styles.noteRow}>
+              <View style={[styles.mic, { backgroundColor: c.sel }]}>
+                <Icon name="mic" size={16} color="#ffffff" />
+              </View>
+              <View style={styles.grow}>
+                <Text variant="bodyStrong">
+                  Anything wrong with your {car ? car.model : 'car'}?
+                </Text>
+                <Text variant="small" tone="muted">
+                  Tell Amit before {order.self ? 'drop-off' : 'pickup'}
+                </Text>
+              </View>
+              <Icon name="chev" size={16} color={c.ink} />
+            </View>
+          </Card>
+        </Pressable>
+      )}
 
       <Card>
         {order.items.map(([name, amount]) => (
@@ -114,6 +169,16 @@ export function ConfirmedScreen({ navigation }: RootScreenProps<'Confirmed'>) {
         </Text>
       ) : null}
     </Screen>
+
+    <NoteSheet
+      ref={noteSheet}
+      onClose={() => noteSheet.current?.dismiss()}
+      onSend={n => {
+        setNote(n.text || n.seconds ? n : null);
+        noteSheet.current?.dismiss();
+      }}
+    />
+    </>
   );
 }
 
@@ -137,5 +202,13 @@ const styles = StyleSheet.create({
   },
   amitNote: { marginTop: 4 },
   row: { flexDirection: 'row', justifyContent: 'space-between', gap: 12 },
+  noteRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  mic: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   right: { textAlign: 'right' },
 });

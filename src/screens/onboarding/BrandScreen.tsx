@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
-import { Card, Field, ScreenHeader, Text } from '@/components';
+import { Card, Field, RegnoSheet, ScreenHeader, Text } from '@/components';
 import { BRANDS, MODELS } from '@/data';
 import type { Car } from '@/domain';
 import { useApp } from '@/store';
@@ -35,7 +35,9 @@ export function BrandScreen({ navigation }: RootScreenProps<'Brand'>) {
   const setCar = useApp(s => s.setCar);
 
   const sheet = useRef<BottomSheetModal>(null);
+  const regnoSheet = useRef<BottomSheetModal>(null);
   const [picking, setPicking] = useState<string | null>(null);
+  const setReg = useApp(s => s.setReg);
 
   /** A brand opens the sheet; the sheet is where the car is finished. */
   const openBrand = (brand: string) => {
@@ -93,7 +95,11 @@ export function BrandScreen({ navigation }: RootScreenProps<'Brand'>) {
         </View>
 
         <Card variant="outlined" style={styles.regRow}>
-          <Pressable style={styles.regPress} accessibilityRole="button">
+          <Pressable
+            style={styles.regPress}
+            accessibilityRole="button"
+            onPress={() => regnoSheet.current?.present()}
+          >
             <Icon name="car" size={24} color={c.ink} />
             <View style={styles.grow}>
               <Text variant="bodyStrong">Enter your car number instead</Text>
@@ -159,6 +165,16 @@ export function BrandScreen({ navigation }: RootScreenProps<'Brand'>) {
         ) : null}
       </ScrollView>
     </View>
+    <RegnoSheet
+      ref={regnoSheet}
+      onClose={() => regnoSheet.current?.dismiss()}
+      onFound={(found, reg) => {
+        setCar(found);
+        setReg(reg);
+        regnoSheet.current?.dismiss();
+        navigation.reset({ index: 0, routes: [{ name: 'Main' }] });
+      }}
+    />
     <ModelSheet
       ref={sheet}
       brand={picking}
