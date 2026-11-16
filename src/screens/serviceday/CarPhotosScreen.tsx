@@ -1,4 +1,6 @@
-import { StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
+
+import { serviceImage } from '@/assets';
 
 import { Button, Card, Screen, ScreenHeader, Text } from '@/components';
 import { ODOMETER, PICKUP_ANGLES } from '@/data';
@@ -32,16 +34,23 @@ export function CarPhotosScreen({ navigation }: RootScreenProps<'CarPhotos'>) {
       </View>
 
       <View style={styles.grid}>
-        {PICKUP_ANGLES.map((angle, i) => (
-          <View key={angle} style={[styles.photo, { backgroundColor: c.bay }]}>
-            <Icon name="camera" size={22} color={c.muted} />
-            <View style={[styles.stamp, { backgroundColor: c.card }]}>
-              <Text variant="meta" tone="ink" numberOfLines={1}>
-                {angle} · {clock.photo(i)}
-              </Text>
+        {PICKUP_ANGLES.map((angle, i) => {
+          const photo = serviceImage(angle.image);
+          return (
+            <View key={angle.label} style={[styles.photo, { backgroundColor: c.bay }]}>
+              {photo ? (
+                <Image source={photo} style={styles.fill} resizeMode="cover" />
+              ) : (
+                <Icon name="camera" size={22} color={c.muted} />
+              )}
+              <View style={[styles.stamp, { backgroundColor: c.card }]}>
+                <Text variant="meta" tone="ink" numberOfLines={1}>
+                  {angle.label} · {clock.photo(i)}
+                </Text>
+              </View>
             </View>
-          </View>
-        ))}
+          );
+        })}
       </View>
 
       <Card>
@@ -70,10 +79,12 @@ const styles = StyleSheet.create({
   grow: { flex: 1, minWidth: 0 },
   promise: { flexDirection: 'row', alignItems: 'flex-start', gap: 6 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  fill: { width: '100%', height: '100%' },
   photo: {
     width: '48.5%',
     aspectRatio: 4 / 3,
     borderRadius: radius.sm,
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
   },

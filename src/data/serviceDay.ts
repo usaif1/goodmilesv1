@@ -73,46 +73,55 @@ export const ESTIMATE_ITEMS = [...ESTIMATE_MUST, ...ESTIMATE_IMPROVE];
  */
 export type WorkRecord = {
   name: string;
-  /** Captions for the before/after pair; one entry where a single photo shows both. */
-  shots: string[];
+  /** Before/after shots; one entry where a single photo shows both. */
+  shots: { label: string; image?: string }[];
   record: string;
 };
 
 export const WORK_RECORDS: Record<string, WorkRecord> = {
   m1: {
     name: 'Engine oil and filter',
-    shots: ['Old oil out', 'New oil, sealed can'],
+    shots: [
+      { label: 'Old oil out', image: 'engine' },
+      { label: 'New oil, sealed can', image: 'wrench' },
+    ],
     record: '5W-30, 3.5 L · Batch B0336 · Old filter goes in your box',
   },
   m2: {
     name: 'Front brake pads',
-    shots: ['Old 2 mm · New 10 mm'],
+    shots: [{ label: 'Old 2 mm · New 10 mm', image: 'pads-old-new' }],
     record:
       'Branded (OES) · Part no. 58101-K9A00 · 3-month warranty · Old pads go in your box',
   },
   i1: {
     name: 'AC cooling coil cleaning',
-    shots: ['Vent 15°C', 'Coil cleaned'],
+    shots: [
+      { label: 'Vent 15°C' },
+      { label: 'Coil cleaned', image: 'cover-cooling-coil' },
+    ],
     record: 'Vent air after: 8°C',
   },
   i2: {
     name: 'Wheel alignment',
-    shots: ['Pulled left', 'Aligned'],
+    shots: [{ label: 'Pulled left' }, { label: 'Aligned' }],
     record: 'Before and after readings go in your service record',
   },
 };
 
-/** The eight angles photographed at pickup, in order. */
-export const PICKUP_ANGLES = [
-  'Front left',
-  'Front right',
-  'Rear',
-  'Left side',
-  'Right side',
-  'Odometer, fuel',
-  'Interior',
-  'Bumper scratch',
-] as const;
+/**
+ * The eight angles photographed at pickup, in order, with the key each
+ * one's photograph is registered under.
+ */
+export const PICKUP_ANGLES: { label: string; image: string }[] = [
+  { label: 'Front left', image: 'angle-front-left' },
+  { label: 'Front right', image: 'angle-front-right' },
+  { label: 'Rear', image: 'angle-rear' },
+  { label: 'Left side', image: 'angle-left-side' },
+  { label: 'Right side', image: 'angle-right-side' },
+  { label: 'Odometer, fuel', image: 'angle-odometer' },
+  { label: 'Interior', image: 'angle-interior' },
+  { label: 'Bumper scratch', image: 'angle-scratch' },
+];
 
 /** The action each stage offers on the bookings timeline. */
 export const STAGE_ACTIONS = [

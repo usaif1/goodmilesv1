@@ -1,7 +1,9 @@
 import { useMemo, useRef } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
+
+import { carImage, categoryImage } from '@/assets';
 
 import { CarsSheet, CategoryTile, Section, Text } from '@/components';
 import { CATEGORIES, serviceById } from '@/data';
@@ -87,7 +89,15 @@ export function HomeScreen({ navigation }: TabScreenProps<'HomeTab'>) {
             car ? carsSheet.current?.present() : navigation.navigate('Brand')
           }
         >
-          <Icon name="car" size={26} color={c.ink} />
+          {carImage(car?.model) ? (
+            <Image
+              source={carImage(car?.model)}
+              style={styles.carArt}
+              resizeMode="contain"
+            />
+          ) : (
+            <Icon name="car" size={26} color={c.ink} />
+          )}
           <View style={[styles.carBadge, { backgroundColor: c.ink }]}>
             {/*
               No numberOfLines here: Android under-measures uppercase text
@@ -128,7 +138,15 @@ export function HomeScreen({ navigation }: TabScreenProps<'HomeTab'>) {
                   onPress={() => openCategory(catId)}
                 >
                   <View style={[styles.bigArt, { backgroundColor: c.card, borderColor: c.line }]}>
-                    <Icon name={category.icon} size={44} color={c.ink} />
+                    {categoryImage(category.png ?? category.id) ? (
+                      <Image
+                        source={categoryImage(category.png ?? category.id)}
+                        style={styles.bigArtImage}
+                        resizeMode="contain"
+                      />
+                    ) : (
+                      <Icon name={category.icon} size={44} color={c.ink} />
+                    )}
                   </View>
                   <Text variant="h3">{category.name}</Text>
                   <Text variant="body" tone="muted" numberOfLines={1}>
@@ -233,6 +251,8 @@ const styles = StyleSheet.create({
   locationName: { fontSize: 15 },
   grow: { flex: 1, minWidth: 0 },
   car: { flexShrink: 0, maxWidth: 110, alignItems: 'center', gap: 1 },
+  carArt: { width: 66, height: 34 },
+  bigArtImage: { width: '58%', height: '72%' },
   carBadge: { borderRadius: 4, paddingHorizontal: 8, paddingVertical: 2 },
   /*
    * The bold face, not fontWeight on top of the regular one: Android

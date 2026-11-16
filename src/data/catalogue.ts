@@ -109,7 +109,7 @@ export const CATEGORIES = [
     "png": "periodic",
     "photo": "u-bay"
   }
-] as const satisfies readonly Category[];
+] as unknown as readonly Category[];
 
 export const SERVICES = [
   {

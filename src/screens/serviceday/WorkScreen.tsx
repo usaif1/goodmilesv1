@@ -1,4 +1,6 @@
-import { StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
+
+import { serviceImage } from '@/assets';
 
 import { Card, Pill, Screen, ScreenHeader, Text } from '@/components';
 import { WORK_RECORDS } from '@/data';
@@ -60,23 +62,30 @@ export function WorkScreen({ navigation }: RootScreenProps<'Work'>) {
 
             {ok ? (
               <View style={styles.shots}>
-                {job.shots.map(label => (
-                  <View
-                    key={label}
-                    style={[
-                      styles.shot,
-                      { backgroundColor: c.bay },
-                      job.shots.length === 1 && styles.shotWide,
-                    ]}
-                  >
-                    <Icon name="camera" size={20} color={c.muted} />
-                    <View style={[styles.stamp, { backgroundColor: c.card }]}>
-                      <Text variant="meta" tone="ink" numberOfLines={1}>
-                        {label}
-                      </Text>
+                {job.shots.map(shot => {
+                  const photo = serviceImage(shot.image);
+                  return (
+                    <View
+                      key={shot.label}
+                      style={[
+                        styles.shot,
+                        { backgroundColor: c.bay },
+                        job.shots.length === 1 && styles.shotWide,
+                      ]}
+                    >
+                      {photo ? (
+                        <Image source={photo} style={styles.fill} resizeMode="cover" />
+                      ) : (
+                        <Icon name="camera" size={20} color={c.muted} />
+                      )}
+                      <View style={[styles.stamp, { backgroundColor: c.card }]}>
+                        <Text variant="meta" tone="ink" numberOfLines={1}>
+                          {shot.label}
+                        </Text>
+                      </View>
                     </View>
-                  </View>
-                ))}
+                  );
+                })}
               </View>
             ) : null}
 
@@ -118,10 +127,12 @@ const styles = StyleSheet.create({
   head: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   doneRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   shots: { flexDirection: 'row', gap: 8 },
+  fill: { width: '100%', height: '100%' },
   shot: {
     flex: 1,
     aspectRatio: 4 / 3,
     borderRadius: radius.sm,
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
   },

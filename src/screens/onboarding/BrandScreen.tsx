@@ -1,5 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+
+import { brandImage, carImage } from '@/assets';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 import { Card, Field, RegnoSheet, ScreenHeader, Text } from '@/components';
@@ -126,11 +128,19 @@ export function BrandScreen({ navigation }: RootScreenProps<'Brand'>) {
                 accessibilityRole="button"
                 onPress={() => openBrand(b)}
               >
-                <View style={[styles.initials, { backgroundColor: c.bay }]}>
-                  <Text variant="bodyStrong">
-                    {b.split(/[\s-]/).map(w => w[0]).join('').slice(0, 2)}
-                  </Text>
-                </View>
+                {brandImage(b) ? (
+                  <Image
+                    source={brandImage(b)}
+                    style={styles.logo}
+                    resizeMode="contain"
+                  />
+                ) : (
+                  <View style={[styles.initials, { backgroundColor: c.bay }]}>
+                    <Text variant="bodyStrong">
+                      {b.split(/[\s-]/).map(w => w[0]).join('').slice(0, 2)}
+                    </Text>
+                  </View>
+                )}
                 <Text variant="meta" tone="ink" numberOfLines={2} style={styles.tileName}>
                   {b}
                 </Text>
@@ -151,7 +161,11 @@ export function BrandScreen({ navigation }: RootScreenProps<'Brand'>) {
                   i > 0 && { borderTopWidth: layout.hairline, borderTopColor: c.line },
                 ]}
               >
-                <View style={[styles.thumb, { backgroundColor: c.bay }]} />
+                {carImage(m) ? (
+                  <Image source={carImage(m)} style={styles.carThumb} resizeMode="contain" />
+                ) : (
+                  <View style={[styles.thumb, { backgroundColor: c.bay }]} />
+                )}
                 <View style={styles.grow}>
                   <Text variant="bodyStrong">{m}</Text>
                   <Text variant="body" tone="muted">
@@ -229,4 +243,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   thumb: { width: 40, height: 30, borderRadius: radius.sm },
+  logo: { width: 44, height: 44 },
+  carThumb: { width: 56, height: 36 },
 });

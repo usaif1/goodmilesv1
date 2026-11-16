@@ -1,5 +1,7 @@
 import { forwardRef } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
+
+import { carImage } from '@/assets';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 import type { Car } from '@/domain';
@@ -47,7 +49,15 @@ export const CarsSheet = forwardRef<BottomSheetModal, CarsSheetProps>(
               ]}
             >
               <View style={[styles.thumb, { backgroundColor: c.bay }]}>
-                <Icon name="car" size={22} color={c.muted} />
+                {carImage(car.model) ? (
+                  <Image
+                    source={carImage(car.model)}
+                    style={styles.carArt}
+                    resizeMode="contain"
+                  />
+                ) : (
+                  <Icon name="car" size={22} color={c.muted} />
+                )}
               </View>
               <View style={styles.grow}>
                 <Text variant="bodyStrong">
@@ -78,6 +88,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: radius.lg,
   },
+  carArt: { width: '92%', height: '92%' },
   thumb: {
     width: 48,
     height: 40,

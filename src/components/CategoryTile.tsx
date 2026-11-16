@@ -1,4 +1,6 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
+
+import { categoryImage } from '@/assets';
 
 import { categoryFrom, inr, type Car } from '@/domain';
 import type { Category } from '@/data';
@@ -23,6 +25,8 @@ export function CategoryTile({
 }: CategoryTileProps) {
   const { c } = useTheme();
   const from = withPrice ? categoryFrom(category.id, car) : null;
+  // Some categories borrow another's artwork; `png` says which.
+  const art = categoryImage(category.png ?? category.id);
   // Inspections are free, so they never show a "from" price.
   const priceLine =
     category.id === 'inspection'
@@ -38,7 +42,11 @@ export function CategoryTile({
       style={({ pressed }) => [styles.base, pressed && styles.pressed]}
     >
       <View style={[styles.art, { backgroundColor: c.card, borderColor: c.line }]}>
-        <Icon name={category.icon} size={26} color={c.ink} />
+        {art ? (
+          <Image source={art} style={styles.artImage} resizeMode="contain" />
+        ) : (
+          <Icon name={category.icon} size={26} color={c.ink} />
+        )}
       </View>
       <Text variant="meta" tone="ink" style={styles.name} numberOfLines={2}>
         {category.name}
@@ -55,6 +63,7 @@ export function CategoryTile({
 const styles = StyleSheet.create({
   base: { alignItems: 'center', gap: 7 },
   pressed: { transform: [{ scale: 0.95 }] },
+  artImage: { width: '74%', height: '74%' },
   art: {
     width: '100%',
     aspectRatio: 1,

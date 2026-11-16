@@ -1,4 +1,6 @@
-import { StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
+
+import { serviceImage } from '@/assets';
 
 import { Button, Card, Footer, Screen, ScreenHeader, Text } from '@/components';
 import { ODOMETER } from '@/data';
@@ -40,7 +42,15 @@ export function DeliveryScreen({ navigation }: RootScreenProps<'Delivery'>) {
     >
       <Card>
         <View style={[styles.box, { backgroundColor: c.bay }]}>
-          <Icon name="box" size={32} color={c.muted} />
+          {serviceImage('oldparts-box') ? (
+            <Image
+              source={serviceImage('oldparts-box')}
+              style={styles.fill}
+              resizeMode="cover"
+            />
+          ) : (
+            <Icon name="box" size={32} color={c.muted} />
+          )}
         </View>
         <View style={styles.head}>
           <Text variant="h3" style={styles.grow}>
@@ -78,7 +88,15 @@ export function DeliveryScreen({ navigation }: RootScreenProps<'Delivery'>) {
             ['Delivery', clock.delivered],
           ].map(([label, time]) => (
             <View key={label} style={[styles.shot, { backgroundColor: c.bay }]}>
-              <Icon name="camera" size={20} color={c.muted} />
+              {serviceImage('angle-front-left') ? (
+                <Image
+                  source={serviceImage('angle-front-left')}
+                  style={styles.fill}
+                  resizeMode="cover"
+                />
+              ) : (
+                <Icon name="camera" size={20} color={c.muted} />
+              )}
               <View style={[styles.stamp, { backgroundColor: c.card }]}>
                 <Text variant="meta" tone="ink" numberOfLines={1}>
                   {label} {time}
@@ -103,9 +121,11 @@ export function DeliveryScreen({ navigation }: RootScreenProps<'Delivery'>) {
 
 const styles = StyleSheet.create({
   grow: { flex: 1, minWidth: 0 },
+  fill: { width: '100%', height: '100%' },
   box: {
     height: 180,
     borderRadius: radius.md,
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -122,6 +142,7 @@ const styles = StyleSheet.create({
     flex: 1,
     aspectRatio: 4 / 3,
     borderRadius: radius.sm,
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -1,5 +1,7 @@
 import { forwardRef, useEffect, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
+
+import { carImage } from '@/assets';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 import { Button, Sheet, Text } from '@/components';
@@ -93,7 +95,11 @@ export const ModelSheet = forwardRef<BottomSheetModal, ModelSheetProps>(
                 style={[styles.modelTile, { backgroundColor: c.card, borderColor: c.line }]}
               >
                 <View style={[styles.art, { backgroundColor: c.bay }]}>
-                  <Icon name="car" size={28} color={c.muted} />
+                  {carImage(m) ? (
+                    <Image source={carImage(m)} style={styles.carArt} resizeMode="contain" />
+                  ) : (
+                    <Icon name="car" size={28} color={c.muted} />
+                  )}
                 </View>
                 <Text variant="smallStrong" style={styles.centre} numberOfLines={2}>
                   {m}
@@ -227,6 +233,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  carArt: { width: '92%', height: '92%' },
   change: { textDecorationLine: 'underline' },
   step: { gap: 10, padding: 16, borderRadius: radius.lg },
   stepHead: { flexDirection: 'row', alignItems: 'center', gap: 8 },
