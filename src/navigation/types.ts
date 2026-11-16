@@ -47,6 +47,7 @@ export type RootStackParamList = {
   Passport: undefined;
   CertifiedPdf: undefined;
   Certificate: undefined;
+  SampleDay: undefined;
 };
 
 export type RootScreenProps<T extends keyof RootStackParamList> =

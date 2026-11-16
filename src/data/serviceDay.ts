@@ -130,3 +130,53 @@ export const STAGE_ACTIONS = [
 
 /** Odometer and fuel as recorded at pickup and delivery. */
 export const ODOMETER = { pickup: '42,310 km', delivery: '42,328 km' } as const;
+
+/**
+ * The sample day: a guided replay of a service for someone who has not
+ * booked one. The customer makes the approve decisions themselves, so
+ * the total at the end is theirs, not a number we asserted.
+ *
+ * Fixed figures rather than the pricing engine, because there is no car
+ * to price against - the whole point is that it is not yours.
+ */
+export const SAMPLE_DAY = {
+  car: 'Hyundai Creta 2021',
+  km: '42,310',
+  code: '4721',
+  driver: 'Rahul',
+  approvedAt: '10:58 AM',
+  times: ['9:14 AM', '10:52 AM', '11:40 AM', '6:42 PM', '6:50 PM'],
+  base: { name: 'Standard service', price: 4499 },
+  extras: [
+    {
+      id: 'pads',
+      name: 'Front brake pads',
+      price: 2599,
+      tag: 'Fix now' as const,
+      note: '2 mm left. Below 3 mm they damage the discs.',
+    },
+    {
+      id: 'ac',
+      name: 'AC cooling coil cleaning',
+      price: 2399,
+      tag: 'Can wait' as const,
+      note: 'Vent air is 15°C. A clean coil brings it to about 8°C.',
+    },
+  ],
+} as const;
+
+export const SAMPLE_CHAPTERS = [
+  'Pickup',
+  'Estimate',
+  'Work',
+  'Delivery',
+  'Paid',
+] as const;
+
+/** The four angles the sample shows at pickup. */
+export const SAMPLE_ANGLES = [
+  'Front left',
+  'Front right',
+  'Odometer',
+  'Bumper scratch',
+] as const;

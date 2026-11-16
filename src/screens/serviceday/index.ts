@@ -6,3 +6,4 @@ export { WorkScreen } from './WorkScreen';
 export { DeliveryScreen } from './DeliveryScreen';
 export { BillScreen } from './BillScreen';
 export { RateScreen } from './RateScreen';
+export { SampleDayScreen } from './SampleDayScreen';

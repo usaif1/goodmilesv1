@@ -29,6 +29,7 @@ import {
 } from '@/screens/browse';
 import {
   BillScreen,
+  SampleDayScreen,
   CarPhotosScreen,
   DeliveryScreen,
   EstimateScreen,
@@ -98,6 +99,7 @@ export function RootNavigator() {
         <Stack.Screen name="Delivery" component={DeliveryScreen} />
         <Stack.Screen name="Bill" component={BillScreen} />
         <Stack.Screen name="Rate" component={RateScreen} />
+        <Stack.Screen name="SampleDay" component={SampleDayScreen} />
         <Stack.Screen name="Passport" component={PassportScreen} />
         <Stack.Screen name="CertifiedPdf" component={CertifiedPdfScreen} />
         <Stack.Screen name="Certificate" component={CertificateScreen} />

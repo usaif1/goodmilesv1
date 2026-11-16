@@ -2,7 +2,7 @@ import { Fragment } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Button, Card, Pill, Screen, ScreenHeader, Text } from '@/components';
-import { STAGES, STAGE_ACTIONS } from '@/data';
+import { SAMPLE_CHAPTERS, STAGES, STAGE_ACTIONS } from '@/data';
 import { serviceClock } from '@/domain';
 import { useApp } from '@/store';
 import { Icon, layout, useTheme } from '@/theme';
@@ -54,6 +54,39 @@ export function LiveScreen({ navigation }: TabScreenProps<'LiveTab'>) {
               onPress={() => navigation.navigate('HomeTab')}
             />
           </View>
+        </Card>
+
+        {/*
+          With nothing to track, the prototype offers the sample day
+          instead of an empty screen - the customer approves a sample
+          estimate themselves, so the promise is shown rather than told.
+        */}
+        <Card>
+          <View style={styles.sampleHead}>
+            <Pill label="Sample · a Creta's service day" />
+            <Text variant="small" tone="muted">
+              1 min
+            </Text>
+          </View>
+          <Text variant="bodyStrong">
+            Amit found 2 more jobs. Nothing starts without your OK.
+          </Text>
+          <View style={styles.chapters}>
+            {SAMPLE_CHAPTERS.map(ch => (
+              <Text key={ch} variant="small" tone="muted">
+                · {ch}
+              </Text>
+            ))}
+          </View>
+          <Button
+            label="Play the sample day"
+            variant="ghost"
+            onPress={() => navigation.navigate('SampleDay')}
+          />
+          <Text variant="small" tone="muted">
+            You approve a sample estimate yourself. Nothing is booked or
+            charged.
+          </Text>
         </Card>
       </Screen>
     );
@@ -173,6 +206,8 @@ export function LiveScreen({ navigation }: TabScreenProps<'LiveTab'>) {
 const styles = StyleSheet.create({
   grow: { flex: 1, minWidth: 0 },
   emptyRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  sampleHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
+  chapters: { gap: 2 },
   nowRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   stage: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12 },
   node: {
