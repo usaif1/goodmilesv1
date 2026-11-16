@@ -1,7 +1,16 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { Button, Card, Divider, Screen, ScreenHeader, Text } from '@/components';
+import {
+  Button,
+  Card,
+  Divider,
+  Screen,
+  ScreenHeader,
+  Text,
+  useToast,
+} from '@/components';
+import { openWhatsApp } from '@/lib';
 import { HELP_TOPICS } from '@/data';
 import { Icon, layout, radius, useTheme, type IconName } from '@/theme';
 
@@ -9,6 +18,7 @@ import type { RootScreenProps } from '@/navigation/types';
 
 export function HelpScreen({ navigation }: RootScreenProps<'Help'>) {
   const { c } = useTheme();
+  const { toast } = useToast();
   const [topic, setTopic] = useState<number | null>(null);
   const [question, setQuestion] = useState<number | null>(null);
 
@@ -75,7 +85,14 @@ export function HelpScreen({ navigation }: RootScreenProps<'Help'>) {
         <Text variant="small" style={styles.onNavy}>
           A real person answers in 2 minutes, 8 AM–9 PM.
         </Text>
-        <Button label="WhatsApp us" size="sm" variant="ghost" />
+        <Button
+          label="WhatsApp us"
+          size="sm"
+          variant="ghost"
+          onPress={async () => {
+            if (!(await openWhatsApp())) toast("WhatsApp isn\u2019t available here.");
+          }}
+        />
       </Card>
     </Screen>
   );

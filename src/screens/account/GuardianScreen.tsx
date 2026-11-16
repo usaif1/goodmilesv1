@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
-import { Button, Card, Screen, ScreenHeader, Text } from '@/components';
+import { Button, Card, Screen, ScreenHeader, Text, useToast } from '@/components';
+import { call, openWhatsApp } from '@/lib';
 import { Icon, useTheme } from '@/theme';
 
 import type { RootScreenProps } from '@/navigation/types';
@@ -14,6 +15,7 @@ const DUTIES = [
 
 export function GuardianScreen({ navigation }: RootScreenProps<'Guardian'>) {
   const { c } = useTheme();
+  const { toast } = useToast();
   return (
     <Screen header={<ScreenHeader title="Your Guardian" onBack={navigation.goBack} />}>
       <Card style={styles.profile}>
@@ -39,8 +41,25 @@ export function GuardianScreen({ navigation }: RootScreenProps<'Guardian'>) {
       </Card>
 
       <View style={styles.actions}>
-        <Button label="WhatsApp" icon="chat" style={styles.grow} />
-        <Button label="Call" icon="phone" variant="ghost" style={styles.grow} />
+        <Button
+          label="WhatsApp"
+          icon="chat"
+          style={styles.grow}
+          onPress={async () => {
+            if (!(await openWhatsApp("Hi GoodMiles, a question about my car."))) {
+              toast("WhatsApp isn\u2019t available on this device.");
+            }
+          }}
+        />
+        <Button
+          label="Call"
+          icon="phone"
+          variant="ghost"
+          style={styles.grow}
+          onPress={async () => {
+            if (!(await call())) toast("Calling Amit\u2026");
+          }}
+        />
       </View>
     </Screen>
   );

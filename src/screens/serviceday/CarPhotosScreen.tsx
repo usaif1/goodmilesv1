@@ -2,7 +2,14 @@ import { Image, StyleSheet, View } from 'react-native';
 
 import { serviceImage } from '@/assets';
 
-import { Button, Card, Screen, ScreenHeader, Text } from '@/components';
+import {
+  Button,
+  Card,
+  Screen,
+  ScreenHeader,
+  Text,
+  useToast,
+} from '@/components';
 import { ODOMETER, PICKUP_ANGLES } from '@/data';
 import { serviceClock } from '@/domain';
 import { useApp } from '@/store';
@@ -12,6 +19,7 @@ import type { RootScreenProps } from '@/navigation/types';
 
 export function CarPhotosScreen({ navigation }: RootScreenProps<'CarPhotos'>) {
   const { c } = useTheme();
+  const { toast } = useToast();
   const order = useApp(s => s.order);
   const clock = serviceClock(order?.slot.win);
 
@@ -59,7 +67,11 @@ export function CarPhotosScreen({ navigation }: RootScreenProps<'CarPhotos'>) {
         <Row label="Items in the car" value="Spare wheel, jack" />
       </Card>
 
-      <Button label="Something looks wrong? Tell us" variant="ghost" />
+      <Button
+        label="Something looks wrong? Tell us"
+        variant="ghost"
+        onPress={() => toast("Amit will call you about this.")}
+      />
     </Screen>
   );
 }

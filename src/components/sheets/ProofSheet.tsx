@@ -6,6 +6,7 @@ import type { EstimateItem } from '@/data';
 import { Icon, radius, useTheme } from '@/theme';
 
 import { Button } from '../Button';
+import { useToast } from '../Toast';
 import { Sheet } from '../Sheet';
 import { Text } from '../Text';
 
@@ -24,6 +25,7 @@ export type ProofSheetProps = {
 export const ProofSheet = forwardRef<BottomSheetModal, ProofSheetProps>(
   function ProofSheetBase({ item, takenAt, onClose }, ref) {
     const { c } = useTheme();
+    const { toast } = useToast();
     return (
       <Sheet
         ref={ref}
@@ -31,7 +33,12 @@ export const ProofSheet = forwardRef<BottomSheetModal, ProofSheetProps>(
         subtitle="Photos and a measurement"
         snapPoints={['62%']}
         onClose={onClose}
-        footer={<Button label="Ask Amit to call me" variant="ghost" icon="phone" />}
+        footer={<Button
+            label="Ask Amit to call me"
+            variant="ghost"
+            icon="phone"
+            onPress={() => toast("Amit will call you shortly.")}
+          />}
       >
         <View style={[styles.photo, { backgroundColor: c.bay }]}>
           <Icon name="camera" size={34} color={c.muted} />

@@ -1,6 +1,14 @@
 import { StyleSheet, View } from 'react-native';
 
-import { Card, IconButton, Screen, ScreenHeader, Text } from '@/components';
+import {
+  Card,
+  IconButton,
+  Screen,
+  ScreenHeader,
+  Text,
+  useToast,
+} from '@/components';
+import { call } from '@/lib';
 import { pickupDays, serviceClock, windowText } from '@/domain';
 import { useApp } from '@/store';
 import { Icon, useTheme } from '@/theme';
@@ -12,6 +20,7 @@ const RETURNING_FROM = 6;
 
 export function PickupScreen({ navigation }: RootScreenProps<'Pickup'>) {
   const { c } = useTheme();
+  const { toast } = useToast();
   const order = useApp(s => s.order);
   const stage = useApp(s => s.stage);
   const car = useApp(s => s.car);
@@ -53,7 +62,14 @@ export function PickupScreen({ navigation }: RootScreenProps<'Pickup'>) {
               GoodMiles driver
             </Text>
           </View>
-          <IconButton name="phone" size={18} accessibilityLabel="Call Rahul" />
+          <IconButton
+            name="phone"
+            size={18}
+            accessibilityLabel="Call Rahul"
+            onPress={async () => {
+              if (!(await call())) toast("Calling Rahul\u2026");
+            }}
+          />
         </View>
       </Card>
 

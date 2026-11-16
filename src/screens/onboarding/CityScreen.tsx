@@ -2,7 +2,7 @@ import { Fragment } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Text } from '@/components';
+import { Text, useToast } from '@/components';
 import { SERVED_CITIES } from '@/data';
 import { useApp } from '@/store';
 import { Icon, layout, radius, useTheme } from '@/theme';
@@ -11,6 +11,7 @@ import type { RootScreenProps } from '@/navigation/types';
 
 export function CityScreen({ navigation }: RootScreenProps<'City'>) {
   const { c } = useTheme();
+  const { toast } = useToast();
   const insets = useSafeAreaInsets();
   const setCity = useApp(s => s.setCity);
 
@@ -60,6 +61,9 @@ export function CityScreen({ navigation }: RootScreenProps<'City'>) {
         <Pressable
           style={[styles.out, { borderColor: c.ctlLine }]}
           accessibilityRole="button"
+          onPress={() =>
+            toast("We\u2019ll message you when we start in your area.")
+          }
         >
           <View style={styles.grow}>
             <Text variant="h3">Car outside Delhi NCR?</Text>

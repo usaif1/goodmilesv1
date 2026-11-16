@@ -10,3 +10,8 @@ jest.mock('react-native-reanimated', () =>
 jest.mock('@gorhom/bottom-sheet', () =>
   require('@gorhom/bottom-sheet/mock'),
 );
+
+jest.mock('@react-native-clipboard/clipboard', () => ({
+  setString: jest.fn(),
+  getString: jest.fn(() => Promise.resolve('')),
+}));

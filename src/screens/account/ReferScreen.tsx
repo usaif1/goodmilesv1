@@ -1,6 +1,17 @@
 import { StyleSheet, View } from 'react-native';
 
-import { Button, Card, Footer, Screen, ScreenHeader, Text } from '@/components';
+import {
+  Button,
+  Card,
+  Footer,
+  Screen,
+  ScreenHeader,
+  Text,
+  useToast,
+} from '@/components';
+import Clipboard from '@react-native-clipboard/clipboard';
+
+import { share } from '@/lib';
 import { useApp } from '@/store';
 import { useTheme } from '@/theme';
 
@@ -13,6 +24,7 @@ const FRIENDS: [string, string, string][] = [
 
 export function ReferScreen({ navigation }: RootScreenProps<'Refer'>) {
   const { c } = useTheme();
+  const { toast } = useToast();
   const phone = useApp(s => s.phone);
   const code = `ROHAN${phone.slice(-3) || '500'}`;
 
@@ -21,7 +33,14 @@ export function ReferScreen({ navigation }: RootScreenProps<'Refer'>) {
       header={<ScreenHeader title="Refer and earn" onBack={navigation.goBack} />}
       footer={
         <Footer>
-          <Button label="Share on WhatsApp" icon="share" />
+          <Button
+            label="Share on WhatsApp"
+            icon="share"
+            onPress={async () => {
+              const text = `I use GoodMiles for car service. Use my code ${code} for \u20B9500 off your first service.`;
+              if (!(await share(text))) toast("Sharing isn\u2019t available here.");
+            }}
+          />
         </Footer>
       }
     >
@@ -41,7 +60,16 @@ export function ReferScreen({ navigation }: RootScreenProps<'Refer'>) {
           <Text variant="h2" style={styles.code}>
             {code}
           </Text>
-          <Button label="Copy" size="sm" variant="ghost" icon="copy" />
+          <Button
+            label="Copy"
+            size="sm"
+            variant="ghost"
+            icon="copy"
+            onPress={() => {
+              Clipboard.setString(code);
+              toast(`${code} copied`);
+            }}
+          />
         </View>
       </Card>
 

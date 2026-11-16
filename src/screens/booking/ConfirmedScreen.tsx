@@ -10,7 +10,9 @@ import {
   NoteSheet,
   Screen,
   Text,
+  useToast,
 } from '@/components';
+import { openWhatsApp } from '@/lib';
 import { inr, pickupDays, windowText } from '@/domain';
 import { GARAGE } from '@/data';
 import { useApp } from '@/store';
@@ -20,6 +22,7 @@ import type { RootScreenProps } from '@/navigation/types';
 
 export function ConfirmedScreen({ navigation }: RootScreenProps<'Confirmed'>) {
   const { c } = useTheme();
+  const { toast } = useToast();
   const order = useApp(s => s.order);
   const car = useApp(s => s.car);
   const address = useApp(s => s.address);
@@ -47,7 +50,15 @@ export function ConfirmedScreen({ navigation }: RootScreenProps<'Confirmed'>) {
             label="Track booking"
             onPress={() => navigation.reset({ index: 0, routes: [{ name: 'Main' }] })}
           />
-          <Button label="Message Amit" variant="ghost" />
+          <Button
+            label="Message Amit"
+            variant="ghost"
+            onPress={async () => {
+              if (!(await openWhatsApp("Hi GoodMiles, about my booking."))) {
+                toast("WhatsApp isn\u2019t available here.");
+              }
+            }}
+          />
         </Footer>
       }
     >

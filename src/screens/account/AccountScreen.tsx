@@ -1,7 +1,8 @@
 import { Fragment } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { Button, Card, Screen, ScreenHeader, Text } from '@/components';
+import { Button, Card, Screen, ScreenHeader, Text, useToast } from '@/components';
+import { call, openWhatsApp } from '@/lib';
 import { useApp } from '@/store';
 import { Icon, layout, radius, useTheme, type IconName } from '@/theme';
 
@@ -27,6 +28,7 @@ const ROWS: Row[] = [
 
 export function AccountScreen({ navigation }: TabScreenProps<'AccountTab'>) {
   const { c, isDark, toggleTheme } = useTheme();
+  const { toast } = useToast();
   const loggedIn = useApp(s => s.loggedIn);
   const phone = useApp(s => s.phone);
   const address = useApp(s => s.address);
@@ -84,8 +86,23 @@ export function AccountScreen({ navigation }: TabScreenProps<'AccountTab'>) {
           A real person replies in about 2 minutes, 8 AM to 9 PM.
         </Text>
         <View style={styles.helpRow}>
-          <Button label="WhatsApp us" size="sm" style={styles.grow} />
-          <Button label="Call" size="sm" variant="ghost" style={styles.grow} />
+          <Button
+            label="WhatsApp us"
+            size="sm"
+            style={styles.grow}
+            onPress={async () => {
+              if (!(await openWhatsApp())) toast("WhatsApp isn\u2019t available here.");
+            }}
+          />
+          <Button
+            label="Call"
+            size="sm"
+            variant="ghost"
+            style={styles.grow}
+            onPress={async () => {
+              if (!(await call())) toast("Calling GoodMiles\u2026");
+            }}
+          />
         </View>
       </Card>
 

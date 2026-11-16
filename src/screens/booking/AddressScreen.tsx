@@ -10,6 +10,7 @@ import {
   Screen,
   ScreenHeader,
   Text,
+  useToast,
 } from '@/components';
 import { useApp } from '@/store';
 import { Icon, radius, useTheme } from '@/theme';
@@ -21,6 +22,7 @@ const TAGS = ['Home', 'Office', 'Other'];
 
 export function AddressScreen({ navigation }: RootScreenProps<'Address'>) {
   const { c } = useTheme();
+  const { toast } = useToast();
   const setAddress = useApp(s => s.setAddress);
 
   const [flat, setFlat] = useState('Flat 1204, Tower B');
@@ -58,7 +60,12 @@ export function AddressScreen({ navigation }: RootScreenProps<'Address'>) {
         </Text>
       </View>
 
-      <Button label="Use my current location" variant="ghost" icon="location" />
+      <Button
+        label="Use my current location"
+        variant="ghost"
+        icon="location"
+        onPress={() => toast("Location found: Sector 137, Noida")}
+      />
 
       <Card>
         <Text variant="bodyStrong">Sector 137</Text>

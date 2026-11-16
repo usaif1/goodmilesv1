@@ -9,6 +9,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { ToastProvider } from '@/components';
 import { RootNavigator } from '@/navigation';
 import { ThemeProvider } from '@/theme';
 
@@ -19,7 +20,9 @@ export default function App() {
       <SafeAreaProvider>
         <ThemeProvider>
           <BottomSheetModalProvider>
-            <RootNavigator />
+            <ToastProvider>
+              <RootNavigator />
+            </ToastProvider>
           </BottomSheetModalProvider>
         </ThemeProvider>
       </SafeAreaProvider>

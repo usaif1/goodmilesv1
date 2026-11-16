@@ -5,7 +5,7 @@ import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 import { carImage, categoryImage } from '@/assets';
 
-import { CarsSheet, CategoryTile, Section, Text } from '@/components';
+import { CarsSheet, CategoryTile, Section, Text, useToast } from '@/components';
 import { CATEGORIES, serviceById } from '@/data';
 import { inr, priceFor } from '@/domain';
 import { useApp } from '@/store';
@@ -42,6 +42,7 @@ const SMALL_TILES = 7;
 
 export function HomeScreen({ navigation }: TabScreenProps<'HomeTab'>) {
   const { c } = useTheme();
+  const { toast } = useToast();
   const insets = useSafeAreaInsets();
   const car = useApp(s => s.car);
   const cars = useApp(s => s.cars);
@@ -66,7 +67,11 @@ export function HomeScreen({ navigation }: TabScreenProps<'HomeTab'>) {
     <>
     <View style={[styles.fill, { backgroundColor: c.page }]}>
       <View style={[styles.header, { backgroundColor: c.card, paddingTop: insets.top + 6 }]}>
-        <Pressable style={styles.location} accessibilityRole="button">
+        <Pressable
+          style={styles.location}
+          accessibilityRole="button"
+          onPress={() => navigation.navigate('Address')}
+        >
           <Icon name="pin" size={20} color={c.ink} />
           <View style={styles.grow}>
             <View style={styles.locationTop}>
@@ -204,7 +209,13 @@ export function HomeScreen({ navigation }: TabScreenProps<'HomeTab'>) {
         </Section>
 
         <Section>
-          <Pressable style={styles.notSure} accessibilityRole="button">
+          <Pressable
+            style={styles.notSure}
+            accessibilityRole="button"
+            onPress={() =>
+              toast("Book a free inspection and Amit will tell you.")
+            }
+          >
             <Icon name="help" size={20} color={c.ink} />
             <View style={styles.grow}>
               <Text variant="bodyStrong">Not sure what&rsquo;s wrong?</Text>

@@ -10,6 +10,7 @@ import {
   Screen,
   ScreenHeader,
   Text,
+  useToast,
 } from '@/components';
 import { useApp } from '@/store';
 
@@ -25,6 +26,7 @@ const ISSUES = [
 ];
 
 export function NotRightScreen({ navigation }: RootScreenProps<'NotRight'>) {
+  const { toast } = useToast();
   const order = useApp(s => s.order);
   const [picked, setPicked] = useState<string[]>([]);
   const [safe, setSafe] = useState(true);
@@ -40,7 +42,13 @@ export function NotRightScreen({ navigation }: RootScreenProps<'NotRight'>) {
       }
       footer={
         <Footer>
-          <Button label="Send to Amit" onPress={navigation.goBack} />
+          <Button
+            label="Send to Amit"
+            onPress={() => {
+              toast("Sent. Amit will call you shortly.");
+              navigation.goBack();
+            }}
+          />
         </Footer>
       }
     >
@@ -81,8 +89,22 @@ export function NotRightScreen({ navigation }: RootScreenProps<'NotRight'>) {
       </View>
 
       <View style={styles.actions}>
-        <Button label="Record sound" size="sm" variant="ghost" icon="mic" style={styles.grow} />
-        <Button label="Photo or video" size="sm" variant="ghost" icon="camera" style={styles.grow} />
+        <Button
+          label="Record sound"
+          size="sm"
+          variant="ghost"
+          icon="mic"
+          style={styles.grow}
+          onPress={() => toast("Recording isn\u2019t wired up yet.")}
+        />
+        <Button
+          label="Photo or video"
+          size="sm"
+          variant="ghost"
+          icon="camera"
+          style={styles.grow}
+          onPress={() => toast("The camera isn\u2019t wired up yet.")}
+        />
       </View>
 
       <Card>

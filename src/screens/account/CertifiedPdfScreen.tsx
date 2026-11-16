@@ -2,7 +2,14 @@ import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Svg, { Rect } from 'react-native-svg';
 
-import { Button, Footer, Screen, ScreenHeader, Text } from '@/components';
+import {
+  Button,
+  Footer,
+  Screen,
+  ScreenHeader,
+  Text,
+  useToast,
+} from '@/components';
 import { ODOMETER } from '@/data';
 import { useApp } from '@/store';
 import { face, layout, radius, useTheme } from '@/theme';
@@ -42,6 +49,7 @@ export function CertifiedPdfScreen({
   navigation,
 }: RootScreenProps<'CertifiedPdf'>) {
   const { c } = useTheme();
+  const { toast } = useToast();
   const car = useApp(s => s.car);
   const reg = useApp(s => s.reg);
   const order = useApp(s => s.order);
@@ -78,8 +86,23 @@ export function CertifiedPdfScreen({
       }
       footer={
         <Footer>
-          <Button label="Download PDF" />
-          <Button label="Share with a buyer" variant="ghost" />
+          <Button
+            label="Download PDF"
+            onPress={() =>
+              toast(
+                real
+                  ? "Saved to Downloads"
+                  : "This is a sample. Yours is ready after your first service.",
+              )
+            }
+          />
+          <Button
+            label="Share with a buyer"
+            variant="ghost"
+            onPress={() =>
+              toast(real ? "Share link copied" : "This is a sample.")
+            }
+          />
         </Footer>
       }
     >
