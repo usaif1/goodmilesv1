@@ -9,10 +9,15 @@ import {
   Divider,
   Footer,
   LoginSheet,
+  MiniCard,
+  Rail,
   Screen,
   ScreenHeader,
   Text,
+  useToast,
 } from '@/components';
+import { share } from '@/lib';
+import { ADDONS, serviceById } from '@/data';
 import { buildBill, inr, mrp } from '@/domain';
 import { useApp } from '@/store';
 import { Icon, radius, useTheme } from '@/theme';
@@ -42,6 +47,35 @@ export function CartScreen({ navigation }: RootScreenProps<'Cart'>) {
   const parts = useApp(s => s.parts);
 
   const loginSheet = useRef<BottomSheetModal>(null);
+  const { toast } = useToast();
+
+  /** Jobs commonly added with what is already in the cart. */
+  const suggestions = [
+    ...new Set(cart.flatMap(id => ADDONS[serviceById(id)?.cat ?? ''] ?? [])),
+  ]
+    .filter(id => !cart.includes(id))
+    .slice(0, 4)
+    .map(serviceById)
+    .filter((s): s is NonNullable<typeof s> => !!s);
+
+  /** The prototype lets the cart be shared as plain text. */
+  const sharePrices = async () => {
+    const date = new Date().toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+    const lines = [
+      `GoodMiles · ${car ? `${car.brand} ${car.model}, ${car.fuel}` : 'my car'}`,
+      ...bill.items.map(
+        i => `${i.service.name} ${i.total === null ? 'price after inspection' : inr(i.total)}`,
+      ),
+      'Pickup and drop ₹0',
+      `Total ${inr(bill.total)}`,
+      `Quoted ${date}. Prices include GST.`,
+    ];
+    if (!(await share(lines.join('\n')))) toast('Sharing isn\u2019t available here.');
+  };
 
   const bill = buildBill({
     cart,
@@ -144,6 +178,28 @@ export function CartScreen({ navigation }: RootScreenProps<'Cart'>) {
         </Pressable>
       </Card>
 
+      {suggestions.length ? (
+        <View>
+          <Text variant="h3" style={styles.suggestTitle}>
+            Often added together
+          </Text>
+          <Rail>
+            {suggestions.map(service => (
+              <MiniCard
+                key={service.id}
+                service={service}
+                car={car}
+                added={cart.includes(service.id)}
+                onAdd={() => toggleCart(service.id)}
+                onPress={() =>
+                  navigation.navigate('ServiceDetail', { serviceId: service.id })
+                }
+              />
+            ))}
+          </Rail>
+        </View>
+      ) : null}
+
       {!member ? (
         <Pressable
           accessibilityRole="button"
@@ -204,6 +260,11 @@ export function CartScreen({ navigation }: RootScreenProps<'Cart'>) {
             You pay &#8377;0 now. Prices include GST, and nothing extra is done
             without your OK.
           </Text>
+          <Pressable accessibilityRole="button" onPress={sharePrices}>
+            <Text variant="smallStrong" style={styles.addMore}>
+              Share these prices
+            </Text>
+          </Pressable>
         </Card>
       ) : null}
 
@@ -267,6 +328,7 @@ const styles = StyleSheet.create({
   itemPrice: { flexDirection: 'row', alignItems: 'baseline', gap: 8, marginTop: 2 },
   was: { textDecorationLine: 'line-through' },
   addMore: { textDecorationLine: 'underline' },
+  suggestTitle: { marginBottom: 12 },
   coupon: {
     flexDirection: 'row',
     alignItems: 'center',

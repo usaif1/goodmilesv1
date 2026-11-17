@@ -1,7 +1,15 @@
 import { Fragment } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { Button, Card, Pill, Screen, ScreenHeader, Text } from '@/components';
+import {
+  Button,
+  Card,
+  IconButton,
+  Pill,
+  Screen,
+  ScreenHeader,
+  Text,
+} from '@/components';
 import { SAMPLE_CHAPTERS, STAGES, STAGE_ACTIONS } from '@/data';
 import { serviceClock } from '@/domain';
 import { useApp } from '@/store';
@@ -39,7 +47,23 @@ export function LiveScreen({ navigation }: TabScreenProps<'LiveTab'>) {
 
   if (!order) {
     return (
-      <Screen header={<ScreenHeader root title="Bookings" subtitle="No bookings yet" />}>
+      <Screen
+        header={
+          <ScreenHeader
+            root
+            title="Bookings"
+            subtitle="No bookings yet"
+            right={
+              <IconButton
+                name="help"
+                plain
+                accessibilityLabel="Help in 2 minutes"
+                onPress={() => navigation.navigate('Help')}
+              />
+            }
+          />
+        }
+      >
         <Card>
           <View style={styles.emptyRow}>
             <View style={styles.grow}>
@@ -113,6 +137,14 @@ export function LiveScreen({ navigation }: TabScreenProps<'LiveTab'>) {
           root
           title="Bookings"
           subtitle={`${car ? car.model + ' · ' : ''}${order.id}`}
+          right={
+            <IconButton
+              name="help"
+              plain
+              accessibilityLabel="Help in 2 minutes"
+              onPress={() => navigation.navigate('Help')}
+            />
+          }
         />
       }
     >

@@ -1,7 +1,16 @@
-import { Fragment } from 'react';
+import { Fragment, useRef } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
-import { Button, Card, Screen, ScreenHeader, Text, useToast } from '@/components';
+import {
+  Button,
+  Card,
+  CreditsSheet,
+  Screen,
+  ScreenHeader,
+  Text,
+  useToast,
+} from '@/components';
 import { call, openWhatsApp } from '@/lib';
 import { useApp } from '@/store';
 import { Icon, layout, radius, useTheme, type IconName } from '@/theme';
@@ -33,8 +42,10 @@ export function AccountScreen({ navigation }: TabScreenProps<'AccountTab'>) {
   const phone = useApp(s => s.phone);
   const address = useApp(s => s.address);
   const logout = useApp(s => s.logout);
+  const credits = useRef<BottomSheetModal>(null);
 
   return (
+    <>
     <Screen header={<ScreenHeader root title="Account" />}>
       {loggedIn ? (
         <View style={styles.identity}>
@@ -159,7 +170,20 @@ export function AccountScreen({ navigation }: TabScreenProps<'AccountTab'>) {
           </Pressable>
         </Card>
       ) : null}
+
+      <Pressable
+        accessibilityRole="button"
+        onPress={() => credits.current?.present()}
+        style={styles.credits}
+      >
+        <Text variant="small" tone="muted" style={styles.creditsText}>
+          Photo credits
+        </Text>
+      </Pressable>
     </Screen>
+
+    <CreditsSheet ref={credits} onClose={() => credits.current?.dismiss()} />
+    </>
   );
 }
 
@@ -186,4 +210,6 @@ const styles = StyleSheet.create({
   helpRow: { flexDirection: 'row', gap: 8 },
   list: { paddingVertical: 0, gap: 0 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14 },
+  credits: { alignSelf: 'center', paddingVertical: 8 },
+  creditsText: { textDecorationLine: 'underline' },
 });

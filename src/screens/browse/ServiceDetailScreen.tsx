@@ -1,5 +1,7 @@
 import { useRef, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
+
+import { categoryImage } from '@/assets';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 import {
@@ -9,6 +11,7 @@ import {
   Footer,
   PartsSheet,
   PriceTag,
+  useToast,
   Screen,
   ScreenHeader,
   Text,
@@ -43,6 +46,7 @@ export function ServiceDetailScreen({
   route,
 }: RootScreenProps<'ServiceDetail'>) {
   const { c } = useTheme();
+  const { toast } = useToast();
   const service = serviceById(route.params.serviceId);
   const car = useApp(s => s.car);
   const cart = useApp(s => s.cart);
@@ -120,9 +124,39 @@ export function ServiceDetailScreen({
         )
       }
     >
-      <View style={[styles.hero, { backgroundColor: c.bay }]}>
-        <Icon name="wrench" size={48} color={c.muted} />
-      </View>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Play the explainer"
+        onPress={() => toast('The video from our bay plays here.')}
+        style={[styles.hero, { backgroundColor: c.bay }]}
+      >
+        {categoryImage(category?.png ?? service.cat) ? (
+          <Image
+            source={categoryImage(category?.png ?? service.cat)}
+            style={styles.heroImage}
+            resizeMode="contain"
+          />
+        ) : (
+          <Icon name="wrench" size={48} color={c.muted} />
+        )}
+        <View style={[styles.play, { backgroundColor: c.sel }]}>
+          <Icon name="play" size={18} color="#ffffff" />
+        </View>
+      </Pressable>
+
+      <Pressable
+        accessibilityRole="button"
+        onPress={() => navigation.navigate('Passport')}
+        style={[styles.passport, { backgroundColor: c.card, borderColor: c.line }]}
+      >
+        <Icon name="shield" size={16} color={c.ink} />
+        <Text variant="small" style={styles.grow}>
+          Goes in your car&rsquo;s health passport
+        </Text>
+        <Text variant="smallStrong" style={styles.more}>
+          See a sample
+        </Text>
+      </Pressable>
 
       <View>
         <Text variant="h2">{service.name}</Text>
@@ -293,6 +327,25 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  heroImage: { width: '52%', height: '70%' },
+  play: {
+    position: 'absolute',
+    left: 12,
+    bottom: 12,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  passport: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    padding: 12,
+    borderRadius: radius.lg,
+    borderWidth: layout.hairline,
   },
   parts: { gap: 8 },
   partsHead: { flexDirection: 'row', alignItems: 'center', gap: 8 },
