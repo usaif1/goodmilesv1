@@ -77,7 +77,7 @@ export function RootNavigator() {
 
   return (
     <NavigationContainer theme={navTheme}>
-      <Stack.Navigator initialRouteName="Main" screenOptions={{ headerShown: false }}>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
         <Stack.Screen name="Otp" component={OtpScreen} />
         <Stack.Screen name="City" component={CityScreen} />
