@@ -1,6 +1,16 @@
+import { useRef } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
-import { Button, Card, Screen, ScreenHeader, Text } from '@/components';
+import {
+  Button,
+  Card,
+  RegSaveSheet,
+  Screen,
+  ScreenHeader,
+  Text,
+  useToast,
+} from '@/components';
 import { useApp } from '@/store';
 import { Icon, layout, radius, useTheme } from '@/theme';
 
@@ -16,6 +26,9 @@ export function GarageScreen({ navigation }: TabScreenProps<'GarageTab'>) {
   const reg = useApp(s => s.reg);
   const stage = useApp(s => s.stage);
   const order = useApp(s => s.order);
+  const setReg = useApp(s => s.setReg);
+  const { toast } = useToast();
+  const regSheet = useRef<BottomSheetModal>(null);
 
   const serviced = !!order && stage >= RECORDED_FROM;
 
@@ -62,6 +75,7 @@ export function GarageScreen({ navigation }: TabScreenProps<'GarageTab'>) {
   ];
 
   return (
+    <>
     <Screen
       header={<ScreenHeader root title="My Garage" subtitle={reg ?? undefined} />}
     >
@@ -98,12 +112,16 @@ export function GarageScreen({ navigation }: TabScreenProps<'GarageTab'>) {
             We remind you on WhatsApp a week before each one.
           </Text>
         ) : (
-          <View style={[styles.addReg, { borderColor: c.ctlLine }]}>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => regSheet.current?.present()}
+            style={[styles.addReg, { borderColor: c.ctlLine }]}
+          >
             <Icon name="plus" size={16} color={c.ink} />
             <Text variant="small" style={styles.grow}>
               Add your car number to track PUC and insurance
             </Text>
-          </View>
+          </Pressable>
         )}
         <Button
           label={serviced ? 'Book the next service' : 'Book your first service'}
@@ -142,6 +160,18 @@ export function GarageScreen({ navigation }: TabScreenProps<'GarageTab'>) {
         </Card>
       </Pressable>
     </Screen>
+
+    <RegSaveSheet
+      ref={regSheet}
+      initial={reg}
+      onClose={() => regSheet.current?.dismiss()}
+      onSave={next => {
+        setReg(next);
+        regSheet.current?.dismiss();
+        toast('Saved. We’ll remind you before PUC and insurance are due.');
+      }}
+    />
+    </>
   );
 }
 

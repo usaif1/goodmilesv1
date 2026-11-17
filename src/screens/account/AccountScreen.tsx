@@ -7,11 +7,12 @@ import {
   Card,
   CreditsSheet,
   Screen,
+  SupportSheet,
   ScreenHeader,
   Text,
   useToast,
 } from '@/components';
-import { call, openWhatsApp } from '@/lib';
+import { call } from '@/lib';
 import { useApp } from '@/store';
 import { Icon, layout, radius, useTheme, type IconName } from '@/theme';
 
@@ -43,6 +44,7 @@ export function AccountScreen({ navigation }: TabScreenProps<'AccountTab'>) {
   const address = useApp(s => s.address);
   const logout = useApp(s => s.logout);
   const credits = useRef<BottomSheetModal>(null);
+  const support = useRef<BottomSheetModal>(null);
 
   return (
     <>
@@ -101,9 +103,7 @@ export function AccountScreen({ navigation }: TabScreenProps<'AccountTab'>) {
             label="WhatsApp us"
             size="sm"
             style={styles.grow}
-            onPress={async () => {
-              if (!(await openWhatsApp())) toast("WhatsApp isn\u2019t available here.");
-            }}
+            onPress={() => support.current?.present()}
           />
           <Button
             label="Call"
@@ -183,6 +183,7 @@ export function AccountScreen({ navigation }: TabScreenProps<'AccountTab'>) {
     </Screen>
 
     <CreditsSheet ref={credits} onClose={() => credits.current?.dismiss()} />
+    <SupportSheet ref={support} onClose={() => support.current?.dismiss()} />
     </>
   );
 }

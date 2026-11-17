@@ -6,3 +6,6 @@ export { NoteSheet, type NoteSheetProps } from './NoteSheet';
 export { RegnoSheet, type RegnoSheetProps } from './RegnoSheet';
 export { CreditsSheet } from './CreditsSheet';
 export { CancelSheet, type CancelSheetProps } from './CancelSheet';
+export { SupportSheet } from './SupportSheet';
+export { FindOutSheet, type FindOutSheetProps } from './FindOutSheet';
+export { RegSaveSheet, type RegSaveSheetProps } from './RegSaveSheet';

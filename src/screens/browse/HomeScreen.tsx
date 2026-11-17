@@ -3,6 +3,8 @@ import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
+import { openWhatsApp } from '@/lib';
+
 import { carImage, categoryImage, serviceImage } from '@/assets';
 
 import {
@@ -10,6 +12,7 @@ import {
   CarsSheet,
   CartBar,
   CategoryTile,
+  FindOutSheet,
   MiniCard,
   Rail,
   Section,
@@ -92,6 +95,7 @@ export function HomeScreen({ navigation }: TabScreenProps<'HomeTab'>) {
   const cart = useApp(s => s.cart);
   const toggleCart = useApp(s => s.toggleCart);
   const carsSheet = useRef<BottomSheetModal>(null);
+  const findOut = useRef<BottomSheetModal>(null);
 
   const banners: Banner[] = BANNERS.map(b => ({
     title: b.title,
@@ -327,9 +331,7 @@ export function HomeScreen({ navigation }: TabScreenProps<'HomeTab'>) {
           <Pressable
             style={styles.notSure}
             accessibilityRole="button"
-            onPress={() =>
-              toast("Book a free inspection and Amit will tell you.")
-            }
+            onPress={() => findOut.current?.present()}
           >
             <Icon name="help" size={20} color={c.ink} />
             <View style={styles.grow}>
@@ -347,6 +349,30 @@ export function HomeScreen({ navigation }: TabScreenProps<'HomeTab'>) {
       <CartBar onPress={() => navigation.navigate('Cart')} />
     </View>
 
+    <FindOutSheet
+      ref={findOut}
+      onClose={() => findOut.current?.dismiss()}
+      onBookInspection={() => {
+        // The free inspection is a catalogue service like any other.
+        toggleCart('freeinsp');
+        findOut.current?.dismiss();
+        toast('Free inspection added. Amit prices every fix before touching it.');
+      }}
+      onTalk={() => {
+        findOut.current?.dismiss();
+        toast('A technician will call you shortly.');
+      }}
+      onRecord={() => {
+        findOut.current?.dismiss();
+        toast('Tell Amit when you book - he listens before pickup.');
+      }}
+      onWhatsApp={async () => {
+        findOut.current?.dismiss();
+        if (!(await openWhatsApp("Hi GoodMiles, I'm not sure what my car needs."))) {
+          toast('WhatsApp isn’t available here.');
+        }
+      }}
+    />
     <CarsSheet
       ref={carsSheet}
       cars={cars}
