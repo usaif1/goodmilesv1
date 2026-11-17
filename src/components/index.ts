@@ -18,4 +18,7 @@ export { CategoryTile, type CategoryTileProps } from './CategoryTile';
 export { ServiceRow, type ServiceRowProps } from './ServiceRow';
 export { CartBar } from './CartBar';
 export { ToastProvider, useToast } from './Toast';
+export { MiniCard, type MiniCardProps } from './MiniCard';
+export { Rail } from './Rail';
+export { BannerCarousel, type Banner } from './BannerCarousel';
 export * from './sheets';

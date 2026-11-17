@@ -89,15 +89,15 @@ export type AppActions = {
 };
 
 const initial: AppState = {
-  loggedIn: false,
+  loggedIn: true,
   phone: '',
-  car: null,
+  car: { brand: 'Hyundai', model: 'Creta', year: '2020–2022', fuel: 'Petrol', trans: 'Manual' },
   cars: [],
   reg: null,
   city: null,
   address: null,
 
-  cart: [],
+  cart: ['standard'],
   qty: {},
   parts: {},
   coupon: false,

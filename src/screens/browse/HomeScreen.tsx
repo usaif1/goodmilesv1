@@ -3,9 +3,20 @@ import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
-import { carImage, categoryImage } from '@/assets';
+import { carImage, categoryImage, serviceImage } from '@/assets';
 
-import { CarsSheet, CategoryTile, Section, Text, useToast } from '@/components';
+import {
+  BannerCarousel,
+  CarsSheet,
+  CartBar,
+  CategoryTile,
+  MiniCard,
+  Rail,
+  Section,
+  Text,
+  useToast,
+  type Banner,
+} from '@/components';
 import { CATEGORIES, serviceById } from '@/data';
 import { inr, priceFor } from '@/domain';
 import { useApp } from '@/store';
@@ -37,6 +48,36 @@ const PROMISES: [string, string][] = [
 
 const PART_BRANDS = ['BOSCH', 'DENSO', 'Valeo', 'MAHLE', 'NGK', 'Castrol'];
 
+/** The three promises the banners lead with. */
+const BANNERS: { title: string; detail: string; image: string }[] = [
+  {
+    title: 'Your old parts come back',
+    detail: 'Every replaced part, tagged and handed back in a box',
+    image: 'oldparts-box',
+  },
+  {
+    title: 'Approve every rupee',
+    detail: 'Watch the video from the bay, then tick what you want done',
+    image: 'pads-old-new',
+  },
+  {
+    title: 'Free pickup across Noida',
+    detail: 'Your car is photographed from 8 angles at your door',
+    image: 'pickup-photo',
+  },
+];
+
+/** Short explainers, each tied to the service it is about. */
+const KNOW: [string, string][] = [
+  ['standard', 'What happens in a standard service'],
+  ['acreg', 'Why your AC cools less over time'],
+  ['pads', 'When brake pads need changing'],
+  ['align', 'What wheel alignment fixes'],
+];
+
+/** Small jobs worth doing while the car is with us. */
+const ADD_ONS = ['foam', 'align', 'headlight', 'battcheck'];
+
 /** How many small tiles sit under the two big ones. */
 const SMALL_TILES = 7;
 
@@ -48,7 +89,16 @@ export function HomeScreen({ navigation }: TabScreenProps<'HomeTab'>) {
   const cars = useApp(s => s.cars);
   const setCar = useApp(s => s.setCar);
   const address = useApp(s => s.address);
+  const cart = useApp(s => s.cart);
+  const toggleCart = useApp(s => s.toggleCart);
   const carsSheet = useRef<BottomSheetModal>(null);
+
+  const banners: Banner[] = BANNERS.map(b => ({
+    title: b.title,
+    detail: b.detail,
+    image: serviceImage(b.image),
+    onPress: () => navigation.navigate('Category', { categoryId: 'periodic' }),
+  }));
 
   const big = useMemo(() => headlineCategories(new Date().getMonth()), []);
   const small = useMemo(
@@ -129,6 +179,10 @@ export function HomeScreen({ navigation }: TabScreenProps<'HomeTab'>) {
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll}>
+        <View style={[styles.bannerBand, { backgroundColor: c.card }]}>
+          <BannerCarousel banners={banners} />
+        </View>
+
         <Section title={`Services for your ${car ? car.model : 'car'}`}>
           <View style={styles.bigRow}>
             {big.map(([catId, svcId]) => {
@@ -180,17 +234,78 @@ export function HomeScreen({ navigation }: TabScreenProps<'HomeTab'>) {
         </Section>
 
         <Section
+          title="Know before you book"
+          subtitle="Short explainers. You see the work before you pay for it."
+        >
+          <Rail>
+            {KNOW.map(([id, title]) => {
+              const service = serviceById(id);
+              if (!service) return null;
+              return (
+                <Pressable
+                  key={id}
+                  accessibilityRole="button"
+                  onPress={() =>
+                    navigation.navigate('ServiceDetail', { serviceId: id })
+                  }
+                  style={styles.know}
+                >
+                  <View style={[styles.knowArt, { backgroundColor: c.bay }]}>
+                    {categoryImage(service.cat) ? (
+                      <Image
+                        source={categoryImage(service.cat)}
+                        style={styles.knowImage}
+                        resizeMode="contain"
+                      />
+                    ) : (
+                      <Icon name="play" size={24} color={c.muted} />
+                    )}
+                  </View>
+                  <Text variant="smallStrong" numberOfLines={2}>
+                    {title}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </Rail>
+        </Section>
+
+        <Section
           title="The GoodMiles promise"
           subtitle="What every booking includes, whatever the job."
         >
-          <View style={styles.promises}>
+          <Rail>
             {PROMISES.map(([icon, label]) => (
               <View key={label} style={[styles.promise, { backgroundColor: c.bay }]}>
                 <Icon name={icon as never} size={22} color={c.ink} />
                 <Text variant="smallStrong">{label}</Text>
               </View>
             ))}
-          </View>
+          </Rail>
+        </Section>
+
+        <Section
+          title="Good to add"
+          subtitle="Small jobs worth doing while your car is with us."
+        >
+          <Rail>
+            {ADD_ONS.map(id => {
+              const service = serviceById(id);
+              if (!service) return null;
+              return (
+                <MiniCard
+                  key={id}
+                  service={service}
+                  car={car}
+                  added={cart.includes(id)}
+                  onAdd={() => toggleCart(id)}
+                  onPress={() =>
+                    navigation.navigate('ServiceDetail', { serviceId: id })
+                  }
+                />
+              );
+            })}
+          </Rail>
         </Section>
 
         <Section
@@ -228,6 +343,8 @@ export function HomeScreen({ navigation }: TabScreenProps<'HomeTab'>) {
           </Pressable>
         </Section>
       </ScrollView>
+
+      <CartBar onPress={() => navigation.navigate('Cart')} />
     </View>
 
     <CarsSheet
@@ -298,15 +415,25 @@ const styles = StyleSheet.create({
   },
   tileGrid: { flexDirection: 'row', flexWrap: 'wrap', rowGap: 12, columnGap: 8 },
   tileCell: { width: '23%' },
-  promises: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  bannerBand: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 10, marginBottom: 8 },
   promise: {
-    width: '47%',
+    width: 128,
+    height: 96,
     gap: 10,
     padding: 12,
     borderRadius: radius.md,
     justifyContent: 'space-between',
-    minHeight: 96,
   },
+  know: { width: 200, gap: 8 },
+  knowArt: {
+    width: 200,
+    height: 112,
+    borderRadius: radius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  knowImage: { width: '55%', height: '55%' },
   brands: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   brand: {
     width: '31.5%',
