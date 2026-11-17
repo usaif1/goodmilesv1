@@ -19,6 +19,7 @@ export type RootStackParamList = {
   Otp: undefined;
   City: undefined;
   Brand: undefined;
+  Soon: { city?: string } | undefined;
   Main: undefined;
   AllCategories: undefined;
   Category: { categoryId: string };

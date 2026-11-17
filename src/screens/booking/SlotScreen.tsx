@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
-import { Button, Footer, Screen, ScreenHeader, Text } from '@/components';
+import { Button, Footer, Screen, ScreenHeader, Text, useToast } from '@/components';
 import { GARAGE } from '@/data';
-import { WINDOWS, pickupDays, windowText } from '@/domain';
+import { buildBill, WINDOWS, pickupDays, windowText } from '@/domain';
 import { useApp } from '@/store';
 import { Icon, layout, radius, useTheme } from '@/theme';
 
@@ -25,9 +25,71 @@ export function SlotScreen({ navigation }: RootScreenProps<'Slot'>) {
   const address = useApp(s => s.address);
   const dropSelf = useApp(s => s.dropSelf);
   const setDropSelf = useApp(s => s.setDropSelf);
+  const cart = useApp(s => s.cart);
+  const parts = useApp(s => s.parts);
+  const member = useApp(s => s.member);
+  const coupon = useApp(s => s.coupon);
+  const coins = useApp(s => s.coins);
+  const coinsOn = useApp(s => s.coinsOn);
+  const loggedIn = useApp(s => s.loggedIn);
+  const express = useApp(s => s.express);
+  const payNow = useApp(s => s.payNow);
+  const confirmOrder = useApp(s => s.confirmOrder);
+  const clearCart = useApp(s => s.clearCart);
+  const { toast } = useToast();
 
   const days = useMemo(() => pickupDays(), []);
   const full = fullWindows(slot.day);
+
+  /**
+   * The prototype confirms from here rather than via a review step:
+   * check an address exists, check the chosen window is still open,
+   * then book. Order ids run GM-#####, continuing its BN- series.
+   */
+  const confirm = () => {
+    if (!dropSelf && !address) {
+      toast('Add your pickup address');
+      navigation.navigate('Address');
+      return;
+    }
+    if (!slot.win || full.includes(slot.win)) {
+      toast('Choose a time');
+      return;
+    }
+
+    const bill = buildBill({
+      cart,
+      car,
+      parts,
+      member,
+      coupon,
+      coins,
+      coinsOn,
+      loggedIn,
+      express,
+      payNow,
+    });
+
+    confirmOrder({
+      id: `GM-${Math.floor(10000 + Math.random() * 90000)}`,
+      items: bill.items.map(i => [i.service.name, i.total]),
+      slot,
+      self: dropSelf,
+      coupon: bill.couponOff,
+    });
+    // Booked services leave the cart, or the next visit re-books them.
+    clearCart();
+
+    // Bookings sits under the confirmation, so Back goes there rather
+    // than out of the app or to Home.
+    navigation.reset({
+      index: 1,
+      routes: [
+        { name: 'Main', state: { routes: [{ name: 'LiveTab' }] } },
+        { name: 'Confirmed' },
+      ],
+    });
+  };
 
   return (
     <Screen
@@ -41,11 +103,7 @@ export function SlotScreen({ navigation }: RootScreenProps<'Slot'>) {
       }
       footer={
         <Footer total={{ label: 'Pay now', value: '₹0' }}>
-          <Button
-            label="Confirm booking"
-            style={styles.grow}
-            onPress={() => navigation.navigate('Review')}
-          />
+          <Button label="Confirm booking" style={styles.grow} onPress={confirm} />
         </Footer>
       }
     >

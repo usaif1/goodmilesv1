@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
+import { useRef } from 'react';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
+
 import {
   Button,
   Card,
   Divider,
   Screen,
   ScreenHeader,
+  SupportSheet,
   Text,
-  useToast,
 } from '@/components';
-import { openWhatsApp } from '@/lib';
 import { HELP_TOPICS } from '@/data';
 import { Icon, layout, radius, useTheme, type IconName } from '@/theme';
 
@@ -18,11 +20,12 @@ import type { RootScreenProps } from '@/navigation/types';
 
 export function HelpScreen({ navigation }: RootScreenProps<'Help'>) {
   const { c } = useTheme();
-  const { toast } = useToast();
+  const support = useRef<BottomSheetModal>(null);
   const [topic, setTopic] = useState<number | null>(null);
   const [question, setQuestion] = useState<number | null>(null);
 
   return (
+    <>
     <Screen header={<ScreenHeader title="Help centre" onBack={navigation.goBack} />}>
       <View style={styles.grid}>
         {HELP_TOPICS.map(([icon, name], i) => {
@@ -89,12 +92,13 @@ export function HelpScreen({ navigation }: RootScreenProps<'Help'>) {
           label="WhatsApp us"
           size="sm"
           variant="ghost"
-          onPress={async () => {
-            if (!(await openWhatsApp())) toast("WhatsApp isn\u2019t available here.");
-          }}
+          onPress={() => support.current?.present()}
         />
       </Card>
     </Screen>
+
+    <SupportSheet ref={support} onClose={() => support.current?.dismiss()} />
+    </>
   );
 }
 

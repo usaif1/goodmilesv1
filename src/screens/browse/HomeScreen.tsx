@@ -20,7 +20,7 @@ import {
   useToast,
   type Banner,
 } from '@/components';
-import { CATEGORIES, serviceById } from '@/data';
+import { CATEGORIES, STAGES, serviceById } from '@/data';
 import { inr, priceFor } from '@/domain';
 import { useApp } from '@/store';
 import { Icon, face, layout, radius, useTheme } from '@/theme';
@@ -94,6 +94,8 @@ export function HomeScreen({ navigation }: TabScreenProps<'HomeTab'>) {
   const address = useApp(s => s.address);
   const cart = useApp(s => s.cart);
   const toggleCart = useApp(s => s.toggleCart);
+  const order = useApp(s => s.order);
+  const stage = useApp(s => s.stage);
   const carsSheet = useRef<BottomSheetModal>(null);
   const findOut = useRef<BottomSheetModal>(null);
 
@@ -183,6 +185,36 @@ export function HomeScreen({ navigation }: TabScreenProps<'HomeTab'>) {
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll}>
+        {/*
+          While a service is running, Home leads with it rather than
+          making the customer find the bookings tab.
+        */}
+        {order && stage < STAGES.length - 1 ? (
+          <Section>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => navigation.navigate('LiveTab')}
+              style={styles.liveCard}
+            >
+              <View style={styles.liveTop}>
+                <View style={[styles.livePill, { backgroundColor: c.sel }]}>
+                  <View style={[styles.liveDot, { backgroundColor: c.orange }]} />
+                  <Text variant="meta" tone="onDark">
+                    Live · {order.id}
+                  </Text>
+                </View>
+                <Text variant="smallStrong" style={styles.track}>
+                  Track
+                </Text>
+              </View>
+              <Text variant="bodyStrong">{STAGES[stage]?.[0]}</Text>
+              <Text variant="small" style={{ color: c.ink2 }}>
+                {STAGES[stage]?.[1]}
+              </Text>
+            </Pressable>
+          </Section>
+        ) : null}
+
         <View style={[styles.bannerBand, { backgroundColor: c.card }]}>
           <BannerCarousel banners={banners} />
         </View>
@@ -441,6 +473,18 @@ const styles = StyleSheet.create({
   },
   tileGrid: { flexDirection: 'row', flexWrap: 'wrap', rowGap: 12, columnGap: 8 },
   tileCell: { width: '23%' },
+  liveCard: { gap: 4 },
+  liveTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  livePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: radius.sm,
+  },
+  liveDot: { width: 6, height: 6, borderRadius: 3 },
+  track: { textDecorationLine: 'underline' },
   bannerBand: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 10, marginBottom: 8 },
   promise: {
     width: 128,

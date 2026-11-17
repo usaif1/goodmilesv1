@@ -1,4 +1,4 @@
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
 
 import { serviceImage } from '@/assets';
 
@@ -73,13 +73,17 @@ export function DeliveryScreen({ navigation }: RootScreenProps<'Delivery'>) {
         </Text>
       </Card>
 
+      <Pressable
+        accessibilityRole="button"
+        onPress={() => navigation.navigate('CarPhotos')}
+      >
       <Card>
         <View style={styles.head}>
           <Text variant="h3" style={styles.grow}>
             No new marks
           </Text>
           <Text variant="small" tone="muted">
-            8 of 8 angles
+            8 of 8 angles ›
           </Text>
         </View>
         <View style={styles.compare}>
@@ -115,6 +119,7 @@ export function DeliveryScreen({ navigation }: RootScreenProps<'Delivery'>) {
           +18 km for pickup, road test and drop
         </Text>
       </Card>
+      </Pressable>
     </Screen>
   );
 }

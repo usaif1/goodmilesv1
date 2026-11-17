@@ -41,6 +41,7 @@ import {
   BrandScreen,
   CityScreen,
   OtpScreen,
+  SoonScreen,
   WelcomeScreen,
 } from '@/screens/onboarding';
 import { TabNavigator } from './TabNavigator';
@@ -82,6 +83,7 @@ export function RootNavigator() {
         <Stack.Screen name="Otp" component={OtpScreen} />
         <Stack.Screen name="City" component={CityScreen} />
         <Stack.Screen name="Brand" component={BrandScreen} />
+        <Stack.Screen name="Soon" component={SoonScreen} />
         <Stack.Screen name="Main" component={TabNavigator} />
         <Stack.Screen name="AllCategories" component={AllCategoriesScreen} />
         <Stack.Screen name="Category" component={CategoryScreen} />

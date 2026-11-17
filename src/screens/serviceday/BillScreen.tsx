@@ -107,6 +107,10 @@ export function BillScreen({ navigation }: RootScreenProps<'Bill'>) {
         </Text>
       </Card>
 
+      <Pressable
+        accessibilityRole="button"
+        onPress={() => navigation.navigate('Passport')}
+      >
       <Card selected>
         <View style={styles.row}>
           <View style={styles.grow}>
@@ -123,6 +127,7 @@ export function BillScreen({ navigation }: RootScreenProps<'Bill'>) {
             : 'Added to your passport when you pay.'}
         </Text>
       </Card>
+      </Pressable>
 
       {paid ? (
         <Card>
