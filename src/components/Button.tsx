@@ -1,108 +1,108 @@
-import type { ReactNode } from 'react';
 import {
   Pressable,
   StyleSheet,
-  Text,
   View,
+  type PressableProps,
   type ViewStyle,
 } from 'react-native';
-import { color, layout, radius, space, type } from '@/theme';
 
-type Tone = 'brand' | 'accent';
-type Variant = 'solid' | 'outline' | 'ghost';
-type Size = 'lg' | 'sm';
+import { Icon, layout, radius, useTheme, type IconName } from '@/theme';
 
-type Props = {
+import { Text } from './Text';
+
+export type ButtonVariant = 'primary' | 'orange' | 'ghost' | 'danger';
+
+export type ButtonProps = Omit<PressableProps, 'style' | 'children'> & {
   label: string;
-  onPress?: () => void;
-  tone?: Tone;
-  variant?: Variant;
-  size?: Size;
-  /** Full-width CTA, as in every sticky footer. */
+  variant?: ButtonVariant;
+  /** `.btn.sm`: 40 high, 10 radius, sits inline rather than full width. */
+  size?: 'md' | 'sm';
+  icon?: IconName;
+  /** Full width is the default, matching `.btn { width: 100% }`. */
   block?: boolean;
-  disabled?: boolean;
-  /** Leading glyph, e.g. the handset on C11's Call button. */
-  icon?: ReactNode;
+  /**
+   * Marks a ghost button as the destructive choice - red label on the
+   * quiet variant, rather than the filled `danger`, so it stays the
+   * secondary action next to whatever keeps things as they are.
+   */
+  destructive?: boolean;
   style?: ViewStyle;
 };
 
-/**
- * The accent fill is the solid #5925DC measured on C15's CTA, not the
- * lighter #7252EB that starts the membership gradient.
- */
-const TONES: Record<Tone, string> = {
-  brand: color.brand,
-  accent: color.accentSolid,
-};
-
-/**
- * Every button in the mockups is one of three fills at one of two
- * sizes, so they share a component rather than each getting their own:
- *
- *   solid   full-width CTAs (C01, C08, C09, C15) and ADD (C06)
- *   outline ADDED (C06) - white fill, brand border and text
- *   ghost   Change (C05, C09), Call (C11) - brandTint fill
- */
 export function Button({
   label,
-  onPress,
-  tone = 'brand',
-  variant = 'solid',
-  size = 'lg',
-  block = false,
-  disabled = false,
+  variant = 'primary',
+  size = 'md',
   icon,
+  block,
+  destructive,
+  disabled,
   style,
-}: Props) {
-  const accent = TONES[tone];
-  const solid = variant === 'solid';
+  ...rest
+}: ButtonProps) {
+  const { c } = useTheme();
+  const sm = size === 'sm';
+  const full = block ?? !sm;
+
+  const fills: Record<ButtonVariant, { bg: string; fg: string }> = {
+    primary: { bg: c.sel, fg: '#ffffff' },
+    // One orange action per screen. The label is navy, not white:
+    // white on orange is only 3.4:1 and fails AA.
+    orange: { bg: c.orange, fg: c.onOrange },
+    ghost: { bg: c.card, fg: c.ink },
+    danger: { bg: c.redSolid, fg: '#ffffff' },
+  };
+  const { bg, fg } = fills[variant];
+  const bgFinal = disabled ? c.disBg : bg;
+  const fgFinal = disabled ? c.disFg : destructive ? c.red : fg;
 
   return (
     <Pressable
-      onPress={onPress}
-      disabled={disabled}
       accessibilityRole="button"
-      accessibilityState={{ disabled }}
+      accessibilityState={{ disabled: !!disabled }}
+      disabled={disabled}
       style={({ pressed }) => [
-        s.base,
-        size === 'lg' ? s.lg : s.sm,
-        block && s.block,
-        solid && { backgroundColor: accent },
-        variant === 'outline' && [s.outline, { borderColor: accent }],
-        variant === 'ghost' && s.ghost,
-        pressed && s.pressed,
-        disabled && s.disabled,
+        styles.base,
+        {
+          minHeight: sm ? layout.buttonHeightSm : layout.buttonHeight,
+          borderRadius: sm ? radius.md : radius.lg,
+          paddingHorizontal: sm ? 16 : 20,
+          backgroundColor: bgFinal,
+          alignSelf: full ? 'stretch' : 'flex-start',
+        },
+        variant === 'ghost' && {
+          borderWidth: layout.hairline,
+          borderColor: c.ctlLine,
+        },
+        // `.btn:active { transform: scale(.97) }`
+        pressed && !disabled && styles.pressed,
         style,
-      ]}>
-      <View style={s.inner}>
-        {icon}
-        <Text
-          style={[
-            size === 'lg' ? s.labelLg : s.labelSm,
-            { color: solid ? color.textOnBrand : accent },
-          ]}>
-          {label}
-        </Text>
-      </View>
+      ]}
+      {...rest}
+    >
+      {icon ? (
+        <View style={styles.icon}>
+          <Icon name={icon} size={sm ? 16 : 20} color={fgFinal} />
+        </View>
+      ) : null}
+      <Text
+        variant={sm ? 'buttonSmall' : 'button'}
+        style={{ color: fgFinal }}
+        numberOfLines={1}
+      >
+        {label}
+      </Text>
     </Pressable>
   );
 }
 
-const s = StyleSheet.create({
-  inner: { flexDirection: 'row', alignItems: 'center', gap: space.xs + 2 },
+const styles = StyleSheet.create({
   base: {
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: radius.md,
+    gap: 8,
   },
-  lg: { height: layout.ctaHeight, paddingHorizontal: space.xxl },
-  /** C06's ADD measures 30pt tall. */
-  sm: { height: 30, paddingHorizontal: space.lg },
-  block: { alignSelf: 'stretch' },
-  outline: { backgroundColor: color.surface, borderWidth: layout.hairline },
-  ghost: { backgroundColor: color.brandTint },
-  pressed: { opacity: 0.75 },
-  disabled: { opacity: 0.4 },
-  labelLg: type.button,
-  labelSm: type.buttonSmall,
+  pressed: { transform: [{ scale: 0.97 }] },
+  icon: { flexShrink: 0 },
 });

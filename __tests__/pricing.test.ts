@@ -1,130 +1,187 @@
-/**
- * The cart bill is the only real logic in this build, and C08 states
- * every line of it, so the mockup doubles as the expected output.
- *
- * @format
- */
+import { SERVICES, serviceById } from '@/data';
+import {
+  buildBill,
+  categoryFrom,
+  inr,
+  mrp,
+  priceFor,
+  r99,
+  segmentFactor,
+  type Car,
+} from '@/domain';
 
-import { COUPONS, SLOTS, serviceById, type Service } from '@/mocks';
-import { computeTotals, formatAmount } from '@/store';
+const standard = serviceById('standard')!;
 
-const service = (id: string): Service => {
-  const s = serviceById(id);
-  if (!s) throw new Error(`missing fixture: ${id}`);
-  return s;
+const creta: Car = {
+  brand: 'Hyundai',
+  model: 'Creta',
+  year: '2020–2022',
+  fuel: 'Petrol',
+  trans: 'Manual',
+};
+const swift: Car = {
+  brand: 'Maruti Suzuki',
+  model: 'Swift',
+  year: '2023 or newer',
+  fuel: 'Petrol',
+  trans: 'Manual',
+};
+const bmw: Car = {
+  brand: 'BMW',
+  model: '3 Series',
+  year: '2023 or newer',
+  fuel: 'Petrol',
+  trans: 'Automatic',
 };
 
-const coupon = (code: string) => {
-  const c = COUPONS.find(x => x.code === code);
-  if (!c) throw new Error(`missing coupon: ${code}`);
-  return c;
-};
-
-const slot = (id: string) => SLOTS.find(s => s.id === id) ?? null;
-
-test('reproduces the C08 bill exactly', () => {
-  const totals = computeTotals({
-    lines: [service('standard-service'), service('regular-ac-service')],
-    coupon: coupon('XYZSERVICE'),
-    slot: slot('3-4'),
+describe('r99', () => {
+  it('lands every price on a 99', () => {
+    for (const n of [1, 150, 3992.94, 4871.4, 10000]) {
+      expect(r99(n) % 100).toBe(99);
+    }
   });
 
-  expect(totals.itemTotal).toBe(5198);
-  expect(totals.couponDiscount).toBe(248);
-  expect(totals.slotDiscount).toBe(200);
-  expect(totals.pickup).toBe(0);
-  expect(totals.toPay).toBe(4750);
+  it('never goes below 99, and keeps free jobs free', () => {
+    expect(r99(10)).toBe(99);
+    expect(r99(0)).toBe(0);
+    expect(r99(-5)).toBe(0);
+  });
+
+  it('is 30% over for the compare-at price', () => {
+    expect(mrp(3999)).toBe(5199);
+  });
 });
 
-test('a category coupon ignores lines outside its category', () => {
-  // 8% of the whole 5,198 cart would be 416; only the 3,099 Periodic
-  // line is eligible, which is what makes the mockup's 248 correct.
-  const both = computeTotals({
-    lines: [service('standard-service'), service('regular-ac-service')],
-    coupon: coupon('XYZSERVICE'),
-  });
-  const periodicOnly = computeTotals({
-    lines: [service('standard-service')],
-    coupon: coupon('XYZSERVICE'),
+describe('segment factor', () => {
+  it('leaves the smallest cars at 1', () => {
+    expect(segmentFactor(swift)).toBe(1);
   });
 
-  expect(both.couponDiscount).toBe(248);
-  expect(both.couponDiscount).toBe(periodicOnly.couponDiscount);
-  expect(both.couponDiscount).not.toBe(416);
+  it('scales by size', () => {
+    expect(segmentFactor(creta)).toBe(1.2);
+    expect(segmentFactor({ ...creta, model: 'Fortuner' })).toBe(1.5);
+  });
+
+  it('treats the German marques as a band of their own', () => {
+    expect(segmentFactor(bmw)).toBe(2.2);
+  });
 });
 
-test('a coupon with no eligible lines discounts nothing', () => {
-  const totals = computeTotals({
-    lines: [service('regular-ac-service')],
-    coupon: coupon('XYZSERVICE'),
+describe('priceFor', () => {
+  /** 3169 x 1.05 (age) x 1.2 (size) = 3992.94 -> 3999. */
+  it('scales by age and size', () => {
+    expect(priceFor(standard, creta)).toBe(3999);
+    expect(priceFor(standard, swift)).toBe(3199);
   });
-  expect(totals.couponDiscount).toBe(0);
-  expect(totals.toPay).toBe(2099);
+
+  it('charges automatics more, but only on a periodic service', () => {
+    const auto = { ...creta, trans: 'Automatic' };
+    expect(priceFor(standard, auto)).toBe(4199);
+    const brakes = serviceById('pads')!;
+    expect(priceFor(brakes, auto)).toBe(priceFor(brakes, creta));
+  });
+
+  it('charges more for carmaker parts than branded ones', () => {
+    expect(priceFor(standard, creta, 'oem')).toBe(4899);
+    expect(priceFor(standard, creta, 'oes')).toBe(3999);
+  });
+
+  it('ignores the part choice on a job that fits no part', () => {
+    const labourOnly = SERVICES.find(s => !s.parts && s.base > 0)!;
+    expect(priceFor(labourOnly, creta, 'oem')).toBe(
+      priceFor(labourOnly, creta, 'oes'),
+    );
+  });
+
+  it('returns null with no car, so screens can prompt for one', () => {
+    expect(priceFor(standard, null)).toBeNull();
+    expect(categoryFrom('periodic', null)).toBeNull();
+  });
+
+  it('keeps free jobs free', () => {
+    const free = SERVICES.find(s => s.base === 0);
+    if (free) expect(priceFor(free, creta)).toBe(0);
+  });
+
+  it('prices every service in the catalogue', () => {
+    for (const s of SERVICES) {
+      const p = priceFor(s, creta);
+      expect(typeof p).toBe('number');
+      expect(p).toBeGreaterThanOrEqual(0);
+    }
+  });
 });
 
-test('the coupon cap is enforced', () => {
-  // Three periodic services: 2,599 + 3,099 + 4,999 = 10,697.
-  // 8% is 856, above the 600 cap.
-  const totals = computeTotals({
-    lines: [
-      service('basic-service'),
-      service('standard-service'),
-      service('comprehensive-service'),
-    ],
-    coupon: coupon('XYZSERVICE'),
+describe('categoryFrom', () => {
+  it('is the cheapest paid job in the category', () => {
+    const from = categoryFrom('periodic', creta)!;
+    const all = SERVICES.filter(s => s.cat === 'periodic' && s.base > 0).map(
+      s => priceFor(s, creta)!,
+    );
+    expect(from).toBe(Math.min(...all));
   });
-  expect(totals.itemTotal).toBe(10697);
-  expect(totals.couponDiscount).toBe(600);
 });
 
-test('a flat coupon takes its value, not a percentage', () => {
-  const totals = computeTotals({
-    lines: [service('standard-service')],
-    coupon: coupon('XYZFIRST'),
+describe('buildBill', () => {
+  const base = { cart: ['standard'], car: creta, loggedIn: true };
+
+  it('totals the cart', () => {
+    expect(buildBill(base).sub).toBe(3999);
+    expect(buildBill(base).total).toBe(3999);
   });
-  expect(totals.couponDiscount).toBe(300);
-  expect(totals.toPay).toBe(2799);
+
+  it('adds the membership fee and takes 10% off', () => {
+    const b = buildBill({ ...base, member: true });
+    expect(b.memberOff).toBe(400);
+    expect(b.memberFee).toBe(1000);
+    expect(b.total).toBe(4599);
+  });
+
+  it('will not stack a coupon on the member discount', () => {
+    const b = buildBill({ ...base, member: true, coupon: true });
+    expect(b.couponOff).toBe(0);
+  });
+
+  it('caps the coupon at the subtotal', () => {
+    expect(buildBill({ ...base, coupon: true }).couponOff).toBe(200);
+    expect(
+      buildBill({ cart: ['throttle'], car: null, coupon: true }).couponOff,
+    ).toBe(0);
+  });
+
+  it('spends coins only up to a tenth of the bill', () => {
+    const b = buildBill({ ...base, coins: 5000 });
+    expect(b.coinsUse).toBe(399);
+  });
+
+  it('ignores coins when logged out', () => {
+    expect(buildBill({ ...base, loggedIn: false, coins: 500 }).coinsUse).toBe(0);
+  });
+
+  it('discounts prepayment only above the threshold', () => {
+    expect(buildBill({ ...base, payNow: true }).prepay).toBe(59);
+    expect(
+      buildBill({ cart: ['throttle'], car: creta, payNow: true }).prepay,
+    ).toBe(0);
+  });
+
+  it('adds express pickup', () => {
+    expect(buildBill({ ...base, express: true }).total).toBe(3999 + 149);
+  });
+
+  it('never goes below zero', () => {
+    const b = buildBill({ ...base, coupon: true, coins: 99999 });
+    expect(b.total).toBeGreaterThanOrEqual(0);
+  });
+
+  it('skips ids that are not services', () => {
+    expect(buildBill({ cart: ['nope'], car: creta }).items).toHaveLength(0);
+  });
 });
 
-test('membership takes 10 per cent, capped at 1,000', () => {
-  const small = computeTotals({
-    lines: [service('standard-service')],
-    membership: true,
+describe('inr', () => {
+  it('groups in the Indian style', () => {
+    expect(inr(3999)).toBe('₹3,999');
+    expect(inr(104299)).toBe('₹1,04,299');
   });
-  expect(small.membershipDiscount).toBe(310); // 10% of 3,099, rounded
-
-  const large = computeTotals({
-    lines: [
-      service('basic-service'),
-      service('standard-service'),
-      service('comprehensive-service'),
-    ],
-    membership: true,
-  });
-  expect(large.membershipDiscount).toBe(1000); // 1,070 capped
-});
-
-test('an empty cart totals zero', () => {
-  const totals = computeTotals({ lines: [], coupon: coupon('XYZSERVICE') });
-  expect(totals.itemTotal).toBe(0);
-  expect(totals.couponDiscount).toBe(0);
-  expect(totals.toPay).toBe(0);
-});
-
-test('toPay never goes negative', () => {
-  const totals = computeTotals({
-    lines: [service('car-wash')], // 649
-    slot: { id: 'x', label: 'x', discount: 5000 },
-  });
-  expect(totals.toPay).toBe(0);
-});
-
-test('formatAmount uses Indian grouping', () => {
-  expect(formatAmount(649)).toBe('649');
-  expect(formatAmount(5198)).toBe('5,198');
-  expect(formatAmount(4750)).toBe('4,750');
-  expect(formatAmount(10697)).toBe('10,697');
-  expect(formatAmount(123456)).toBe('1,23,456');
-  expect(formatAmount(10000000)).toBe('1,00,00,000');
-  expect(formatAmount(0)).toBe('0');
 });

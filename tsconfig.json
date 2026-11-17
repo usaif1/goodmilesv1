@@ -6,12 +6,12 @@
     },
     /**
      * The base config pins types to ["jest"], which leaves the Node
-     * globals undeclared. icons.test.ts reads the filesystem, so node
-     * is added back. App code never sees these - nothing under src/
-     * imports a Node module.
+     * globals undeclared. theme.test.tsx reads the filesystem to check
+     * the fonts are bundled and linked, so node is added back. App code
+     * never sees these - nothing under src/ imports a Node module.
      */
     "types": ["jest", "node"]
   },
   "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["**/node_modules", "**/Pods"]
+  "exclude": ["**/node_modules", "**/Pods", "reference"]
 }

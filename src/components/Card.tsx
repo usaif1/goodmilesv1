@@ -1,30 +1,46 @@
-import type { ReactNode } from 'react';
-import { StyleSheet, View, type ViewStyle } from 'react-native';
-import { color, layout, radius, shadow } from '@/theme';
+import { StyleSheet, View, type ViewProps } from 'react-native';
 
-type Props = {
-  children: ReactNode;
-  /** Drop the internal padding when the card hosts its own rows. */
-  padded?: boolean;
-  style?: ViewStyle;
+import { layout, radius, shadow, useTheme } from '@/theme';
+
+export type CardProps = ViewProps & {
+  /**
+   * `raised` is the default: flat white with a shadow, sitting on the
+   * grey page. `outlined` is what round 2 switches to wherever the
+   * surface behind is already white - inside a sheet, or a home
+   * section - where a shadow would have nothing to lift off.
+   */
+  variant?: 'raised' | 'outlined';
+  /** Draws the 1.5px navy outline the prototype uses to mark a card. */
+  selected?: boolean;
 };
 
-/**
- * The standard white surface. Cards in the mockups are lifted by a soft
- * shadow and carry no border - what reads as an outline is the shadow
- * falling off over roughly 4pt.
- */
-export function Card({ children, padded = true, style }: Props) {
+export function Card({
+  variant = 'raised',
+  selected = false,
+  style,
+  ...rest
+}: CardProps) {
+  const { c } = useTheme();
   return (
-    <View style={[s.card, padded && s.padded, style]}>{children}</View>
+    <View
+      style={[
+        {
+          backgroundColor: c.card,
+          borderRadius: radius.lg,
+          padding: layout.cardPadding,
+          gap: layout.cardGap,
+        },
+        variant === 'raised'
+          ? shadow.card
+          : { borderWidth: layout.hairline, borderColor: c.line },
+        selected && [styles.selected, { borderColor: c.sel }],
+        style,
+      ]}
+      {...rest}
+    />
   );
 }
 
-const s = StyleSheet.create({
-  card: {
-    backgroundColor: color.surface,
-    borderRadius: radius.lg,
-    ...shadow.card,
-  },
-  padded: { padding: layout.cardPadding },
+const styles = StyleSheet.create({
+  selected: { borderWidth: 1.5 },
 });
