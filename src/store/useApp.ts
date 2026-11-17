@@ -80,6 +80,8 @@ export type AppActions = {
   setDropSelf: (self: boolean) => void;
 
   confirmOrder: (order: Order) => void;
+  /** Only allowed before the inspection starts; see CANCELLABLE_UNTIL. */
+  cancelOrder: () => void;
   advanceStage: () => void;
   approve: (total: number, selection: Record<string, boolean>) => void;
   rate: (stars: number) => void;
@@ -156,6 +158,15 @@ export const useApp = create<AppState & AppActions>()(set => ({
   setDropSelf: dropSelf => set({ dropSelf }),
 
   confirmOrder: order => set({ order, stage: 0 }),
+  cancelOrder: () =>
+    set({
+      order: null,
+      stage: -1,
+      approved: null,
+      approvedSel: null,
+      note: null,
+      symptoms: [],
+    }),
   advanceStage: () => set(s => ({ stage: Math.min(s.stage + 1, 9) })),
   approve: (total, selection) =>
     set({ approved: total, approvedSel: selection }),
@@ -173,5 +184,12 @@ export const useApp = create<AppState & AppActions>()(set => ({
 /** The live order, if the service day is still running. */
 export const useLiveOrder = () =>
   useApp(s => (s.order && s.stage < 9 ? s.order : null));
+
+/**
+ * The last stage at which a booking can still be cancelled. The
+ * promise is "free cancellation until the inspection starts", and the
+ * inspection is what produces the estimate at stage 3.
+ */
+export const CANCELLABLE_UNTIL = 1;
 
 export { initial as initialAppState };

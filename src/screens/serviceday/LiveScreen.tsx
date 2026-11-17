@@ -1,18 +1,22 @@
-import { Fragment } from 'react';
+import { Fragment, useRef } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 import {
   Button,
+  CancelSheet,
   Card,
   IconButton,
   Pill,
   Screen,
   ScreenHeader,
   Text,
+  useToast,
 } from '@/components';
+import { openWhatsApp } from '@/lib';
 import { SAMPLE_CHAPTERS, STAGES, STAGE_ACTIONS } from '@/data';
 import { serviceClock } from '@/domain';
-import { useApp } from '@/store';
+import { CANCELLABLE_UNTIL, useApp } from '@/store';
 import { Icon, layout, useTheme } from '@/theme';
 
 import type { TabScreenProps } from '@/navigation/types';
@@ -44,6 +48,9 @@ export function LiveScreen({ navigation }: TabScreenProps<'LiveTab'>) {
   const stage = useApp(s => s.stage);
   const car = useApp(s => s.car);
   const advanceStage = useApp(s => s.advanceStage);
+  const cancelOrder = useApp(s => s.cancelOrder);
+  const { toast } = useToast();
+  const cancelSheet = useRef<BottomSheetModal>(null);
 
   if (!order) {
     return (
@@ -131,6 +138,7 @@ export function LiveScreen({ navigation }: TabScreenProps<'LiveTab'>) {
   ];
 
   return (
+    <>
     <Screen
       header={
         <ScreenHeader
@@ -231,7 +239,49 @@ export function LiveScreen({ navigation }: TabScreenProps<'LiveTab'>) {
           onPress={() => navigation.navigate(DESTINATION[STAGES[stage][2]!])}
         />
       ) : null}
+
+      <View style={styles.actions}>
+        <Pressable
+          accessibilityRole="button"
+          onPress={async () => {
+            if (!(await openWhatsApp('Hi GoodMiles, about my booking.'))) {
+              toast('WhatsApp isn\u2019t available here.');
+            }
+          }}
+        >
+          <Text variant="smallStrong" style={styles.link}>
+            Message Amit
+          </Text>
+        </Pressable>
+
+        {/*
+          Only while the promise still holds. Past the inspection the
+          work has started, so the link would offer something we have
+          said three times over that we cannot do.
+        */}
+        {stage <= CANCELLABLE_UNTIL ? (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => cancelSheet.current?.present()}
+          >
+            <Text variant="smallStrong" style={styles.link}>
+              Reschedule or cancel
+            </Text>
+          </Pressable>
+        ) : null}
+      </View>
     </Screen>
+
+    <CancelSheet
+      ref={cancelSheet}
+      onClose={() => cancelSheet.current?.dismiss()}
+      onConfirm={() => {
+        cancelSheet.current?.dismiss();
+        cancelOrder();
+        toast('Booking cancelled. Your Guardian will message you to confirm.');
+      }}
+    />
+    </>
   );
 }
 
@@ -240,6 +290,8 @@ const styles = StyleSheet.create({
   emptyRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   sampleHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
   chapters: { gap: 2 },
+  actions: { flexDirection: 'row', justifyContent: 'center', gap: 20, paddingTop: 4 },
+  link: { textDecorationLine: 'underline' },
   nowRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   stage: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12 },
   node: {

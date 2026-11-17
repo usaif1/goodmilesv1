@@ -1,4 +1,5 @@
-import { initialAppState, useApp } from '@/store';
+import { CANCELLABLE_UNTIL, initialAppState, useApp } from '@/store';
+import { DEFAULT_WINDOW } from '@/domain';
 
 /**
  * Screens are often checked by seeding this state and booting straight
@@ -78,5 +79,43 @@ describe('store actions', () => {
     useApp.getState().logout();
     expect(useApp.getState().loggedIn).toBe(false);
     expect(useApp.getState().cart).toEqual([]);
+  });
+});
+
+describe('cancelling a booking', () => {
+  const order = {
+    id: 'GM-24817',
+    items: [['Standard service', 3999]] as [string, number | null][],
+    slot: { day: 1, win: DEFAULT_WINDOW },
+    self: false,
+    coupon: 0,
+  };
+
+  beforeEach(() => useApp.getState().reset());
+
+  it('clears the service day without logging the customer out', () => {
+    const s = useApp.getState();
+    s.setPhone('9876543210');
+    s.login();
+    s.confirmOrder(order);
+    s.approve(6498, { m1: true, m2: true });
+    useApp.getState().cancelOrder();
+
+    const after = useApp.getState();
+    expect(after.order).toBeNull();
+    expect(after.stage).toBe(-1);
+    expect(after.approved).toBeNull();
+    expect(after.approvedSel).toBeNull();
+    // the customer is still signed in, and their car is still theirs
+    expect(after.loggedIn).toBe(true);
+    expect(after.phone).toBe('9876543210');
+  });
+
+  /**
+   * The promise is "free cancellation until the inspection starts", so
+   * the window has to close before the estimate exists at stage 3.
+   */
+  it('closes the window before the estimate', () => {
+    expect(CANCELLABLE_UNTIL).toBeLessThan(3);
   });
 });

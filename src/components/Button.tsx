@@ -20,6 +20,12 @@ export type ButtonProps = Omit<PressableProps, 'style' | 'children'> & {
   icon?: IconName;
   /** Full width is the default, matching `.btn { width: 100% }`. */
   block?: boolean;
+  /**
+   * Marks a ghost button as the destructive choice - red label on the
+   * quiet variant, rather than the filled `danger`, so it stays the
+   * secondary action next to whatever keeps things as they are.
+   */
+  destructive?: boolean;
   style?: ViewStyle;
 };
 
@@ -29,6 +35,7 @@ export function Button({
   size = 'md',
   icon,
   block,
+  destructive,
   disabled,
   style,
   ...rest
@@ -47,7 +54,7 @@ export function Button({
   };
   const { bg, fg } = fills[variant];
   const bgFinal = disabled ? c.disBg : bg;
-  const fgFinal = disabled ? c.disFg : fg;
+  const fgFinal = disabled ? c.disFg : destructive ? c.red : fg;
 
   return (
     <Pressable
