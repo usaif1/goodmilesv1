@@ -1,4 +1,5 @@
 import { CATEGORIES, SERVICES } from '@/data';
+import { buildBill } from '@/domain';
 import { useApp } from '@/store';
 
 /**
@@ -71,5 +72,39 @@ describe('services referenced by the UI exist', () => {
 
   it.each(referenced)('%s is in the catalogue', id => {
     expect(SERVICES.some(s => s.id === id)).toBe(true);
+  });
+});
+
+describe('pricing without a car is absent, not zero', () => {
+  /**
+   * priceFor returns null when no car is chosen, and buildBill sums
+   * those as zero. The cart footer printed that total, so a cart full
+   * of services read as "Total ₹0" - free, rather than not yet
+   * priceable. Screens must branch on the car, not on the number.
+   */
+  it('leaves every line unpriced', () => {
+    const bill = buildBill({ cart: ['standard', 'pads'], car: null });
+    expect(bill.items.every(i => i.unit === null)).toBe(true);
+  });
+
+  it('still sums to zero, which is why the guard has to be the car', () => {
+    const bill = buildBill({ cart: ['standard', 'pads'], car: null });
+    expect(bill.total).toBe(0);
+    expect(bill.sub).toBe(0);
+  });
+
+  it('prices everything once a car is known', () => {
+    const bill = buildBill({
+      cart: ['standard', 'pads'],
+      car: {
+        brand: 'Hyundai',
+        model: 'Creta',
+        year: '2020–2022',
+        fuel: 'Petrol',
+        trans: 'Manual',
+      },
+    });
+    expect(bill.items.every(i => i.unit !== null)).toBe(true);
+    expect(bill.total).toBeGreaterThan(0);
   });
 });

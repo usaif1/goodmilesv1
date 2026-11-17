@@ -50,11 +50,9 @@ export function CartBar({ onPress }: { onPress: () => void }) {
           <Text variant="meta" style={styles.count}>
             {count} {count === 1 ? 'item' : 'items'}
           </Text>
-          {car ? (
-            <Text variant="button" style={styles.total}>
-              {inr(bill.total)}
-            </Text>
-          ) : null}
+          <Text variant="button" style={styles.total}>
+            {car ? inr(bill.total) : 'See price'}
+          </Text>
         </View>
         <Text variant="button" style={styles.total}>
           View cart

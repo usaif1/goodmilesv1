@@ -123,7 +123,12 @@ export function CartScreen({ navigation }: RootScreenProps<'Cart'>) {
         />
       }
       footer={
-        <Footer total={{ label: 'Total', value: inr(bill.total) }}>
+        // priceFor returns null without a car, and buildBill sums those
+        // as zero - printing the total here read as "free" rather than
+        // "we cannot price this yet".
+        <Footer
+          total={car ? { label: 'Total', value: inr(bill.total) } : undefined}
+        >
           <Button
             label={!car ? 'Add your car' : loggedIn ? 'Choose pickup' : 'Log in to book'}
             style={styles.grow}

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ComponentRef } from 'react';
-import { Keyboard, ScrollView, StyleSheet, View } from 'react-native';
+import { Keyboard, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button, Field, Text } from '@/components';
@@ -121,12 +121,17 @@ export function WelcomeScreen({ navigation }: RootScreenProps<'Welcome'>) {
       </Text>
 
       <View style={styles.spacer} />
-      <Text variant="body" style={styles.look}>
-        Just looking?{' '}
-        <Text variant="bodyStrong" style={styles.underline}>
-          See prices without your number
+      <Pressable
+        accessibilityRole="button"
+        onPress={() => navigation.reset({ index: 0, routes: [{ name: 'Main' }] })}
+      >
+        <Text variant="body" style={styles.look}>
+          Just looking?{' '}
+          <Text variant="bodyStrong" style={styles.underline}>
+            See prices without your number
+          </Text>
         </Text>
-      </Text>
+      </Pressable>
     </ScrollView>
   );
 }
